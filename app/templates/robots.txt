@@ -1,0 +1,12 @@
+﻿User-agent: *
+Allow: /
+Allow: /catalog
+Allow: /product/*
+Disallow: /admin
+Disallow: /profile
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /api/admin/*
+Disallow: /api/profile/*
+
+Sitemap: http://localhost:8000/sitemap.xml
