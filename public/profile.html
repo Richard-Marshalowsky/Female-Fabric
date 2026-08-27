@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — Female-Fabric</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body class="bg-[#FAF8F5] text-[#1C1917] flex flex-col min-h-screen">
+
+  <header class="site-header sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur border-b border-[#E7E2DA]">
+    <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      <a href="/" class="flex flex-col items-center">
+        <span class="font-serif text-2xl md:text-3xl font-semibold tracking-wider uppercase text-neutral-900">Female-Fabric</span>
+      </a>
+      <div class="flex items-center space-x-4 text-xs font-medium">
+        <a href="/catalog" class="hover:underline">Каталог</a>
+        <a href="/cart" class="hover:underline">Корзина</a>
+        <button onclick="handleGlobalLogout()" class="text-rose-600 hover:underline">Выйти</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-10 flex-1 max-w-5xl">
+    
+    <!-- Profile Top Greeting -->
+    <div class="flex justify-between items-center mb-8 pb-6 border-b border-[#E7E2DA]">
+      <div>
+        <h1 class="text-3xl font-serif" id="profile-name-header">Личный кабинет</h1>
+        <p class="text-xs text-neutral-500 mt-1" id="profile-email-header">Загрузка данных...</p>
+      </div>
+      <button onclick="handleGlobalLogout()" class="btn btn-secondary btn-sm">Выйти из аккаунта</button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex space-x-6 border-b border-[#E7E2DA] mb-8 text-sm overflow-x-auto">
+      <button class="profile-tab-btn pb-3 font-semibold border-b-2 border-black active" data-tab="tab-orders">История заказов</button>
+      <button class="profile-tab-btn pb-3 font-medium text-neutral-500 hover:text-black transition" data-tab="tab-favorites">Избранное</button>
+      <button class="profile-tab-btn pb-3 font-medium text-neutral-500 hover:text-black transition" data-tab="tab-profile">Мои данные</button>
+      <button class="profile-tab-btn pb-3 font-medium text-neutral-500 hover:text-black transition" data-tab="tab-addresses">Адреса доставки</button>
+    </div>
+
+    <!-- Tab 1: Orders History -->
+    <div id="tab-orders" class="profile-tab-pane">
+      <div id="profile-orders-list">
+        <div class="skeleton h-32 rounded-xl mb-4"></div>
+        <div class="skeleton h-32 rounded-xl"></div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Favorites / Wishlist -->
+    <div id="tab-favorites" class="profile-tab-pane hidden">
+      <div id="profile-favorites-list" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"></div>
+    </div>
+
+    <!-- Tab 3: Personal Info & Password -->
+    <div id="tab-profile" class="profile-tab-pane hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Personal info edit -->
+        <div class="bg-white p-6 rounded-xl border border-[#E7E2DA]">
+          <h3 class="font-serif text-xl font-semibold mb-4">Личные данные</h3>
+          <form id="profile-edit-form" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium mb-1">ФИО</label>
+              <input type="text" id="edit-full-name" required class="form-input text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Email</label>
+              <input type="email" id="edit-email" required class="form-input text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Телефон</label>
+              <input type="tel" id="edit-phone" class="form-input text-sm">
+            </div>
+            <button type="submit" class="btn btn-primary py-2.5 px-6 text-xs font-semibold">Сохранить изменения</button>
+          </form>
+        </div>
+
+        <!-- Password change -->
+        <div class="bg-white p-6 rounded-xl border border-[#E7E2DA]">
+          <h3 class="font-serif text-xl font-semibold mb-4">Смена пароля</h3>
+          <form id="profile-password-form" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium mb-1">Текущий пароль</label>
+              <input type="password" id="old-password" required class="form-input text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Новый пароль</label>
+              <input type="password" id="new-password" required minlength="6" class="form-input text-sm">
+            </div>
+            <button type="submit" class="btn btn-secondary py-2.5 px-6 text-xs font-semibold">Обновить пароль</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab 4: Delivery Addresses -->
+    <div id="tab-addresses" class="profile-tab-pane hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="font-serif text-xl font-semibold">Сохраненные адреса</h3>
+        <button onclick="window.Modal.open('add-address-modal')" class="btn btn-primary btn-sm">+ Добавить адрес</button>
+      </div>
+      <div id="profile-addresses-list"></div>
+    </div>
+
+  </main>
+
+  <!-- Add Address Modal -->
+  <div id="add-address-modal" class="drawer-overlay flex items-center justify-center" onclick="if(event.target === this) window.Modal.close('add-address-modal')">
+    <div class="modal-dialog p-6 bg-white max-w-md w-full relative">
+      <button onclick="window.Modal.close('add-address-modal')" class="absolute top-4 right-4 text-neutral-400 text-lg">✕</button>
+      <h3 class="font-serif text-xl font-semibold mb-4">Новый адрес доставки</h3>
+      <form id="add-address-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium mb-1">Название адреса</label>
+          <input type="text" id="addr-title" value="Домашний" required class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-medium mb-1">Город</label>
+          <input type="text" id="addr-city" placeholder="Москва" required class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-medium mb-1">Улица, дом, квартира</label>
+          <input type="text" id="addr-street" placeholder="ул. Пушкина, д. 5, кв. 12" required class="form-input text-sm">
+        </div>
+        <label class="flex items-center gap-2 text-xs cursor-pointer">
+          <input type="checkbox" id="addr-default" checked class="rounded border-[#E7E2DA]">
+          <span>Сделать адресом по умолчанию</span>
+        </label>
+        <button type="submit" class="btn btn-primary w-full py-3 text-xs font-semibold">Сохранить адрес</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-[#161616] text-[#FAF8F5] py-8 text-center text-xs text-neutral-400 mt-auto">
+    © 2026 Female-Fabric. Все права защищены.
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="/static/js/components/toast.js"></script>
+  <script src="/static/js/components/modal.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/store.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/pages/profile.js"></script>
+</body>
+</html>
