@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Каталог женской одежды — Female-Fabric</title>
+  <meta name="description" content="Полный каталог стильной женской одежды: платья, блузки, брюки, жакеты, верхняя одежда, трикотаж. Быстрая доставка, примерка перед покупкой.">
+  <link rel="canonical" href="http://localhost:8000/catalog">
+  <meta property="og:title" content="Каталог одежды — Female-Fabric">
+  <meta property="og:description" content="Выбирайте современные платья, костюмы и верхнюю одежду из натуральных тканей.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://localhost:8000/catalog">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body class="bg-[#FAF8F5] text-[#1C1917] flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="site-header sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur border-b border-[#E7E2DA]">
+    <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      <button class="md:hidden p-2 text-neutral-800" onclick="window.Modal.open('mobile-menu-drawer')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+
+      <a href="/" class="flex flex-col items-center">
+        <span class="font-serif text-2xl md:text-3xl font-semibold tracking-wider uppercase text-neutral-900">Female-Fabric</span>
+        <span class="text-[9px] uppercase tracking-[0.25em] text-neutral-500 -mt-1">Atelier & Boutique</span>
+      </a>
+
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <a href="/catalog" class="text-neutral-900 font-semibold border-b border-neutral-900 pb-0.5">Каталог</a>
+        <a href="/catalog?category=dresses" class="hover:text-neutral-500 transition">Платья</a>
+        <a href="/catalog?category=suits" class="hover:text-neutral-500 transition">Костюмы</a>
+        <a href="/catalog?category=outerwear" class="hover:text-neutral-500 transition">Верхняя одежда</a>
+        <a href="/catalog?on_sale=true" class="text-rose-600 hover:text-rose-700 font-semibold transition">Sale</a>
+      </nav>
+
+      <div class="flex items-center space-x-4">
+        <div class="search-container relative hidden sm:block w-48 lg:w-64">
+          <input type="text" placeholder="Поиск одежды..." class="site-search-input w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#E7E2DA] rounded-full focus:outline-none focus:border-neutral-900">
+          <svg class="absolute left-3 top-2.5 text-neutral-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <div id="search-autocomplete-dropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-[#E7E2DA] overflow-hidden z-50"></div>
+        </div>
+
+        <div class="auth-guest-view">
+          <button onclick="window.Modal.open('auth-modal')" class="p-2 text-neutral-800 hover:text-neutral-500 transition" title="Войти">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
+        </div>
+        <div class="auth-user-view hidden flex items-center space-x-2">
+          <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 flex items-center gap-1 text-xs font-medium">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="user-name-slot hidden lg:inline">Кабинет</span>
+          </a>
+        </div>
+
+        <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500" title="Избранное">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </a>
+
+        <button onclick="window.Modal.open('cart-drawer')" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Корзина">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge-count absolute -top-1 -right-1 bg-neutral-900 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs & Header -->
+  <div class="container mx-auto px-4 py-6">
+    <div class="text-xs text-neutral-500 mb-4 flex items-center space-x-2">
+      <a href="/" class="hover:text-neutral-900">Главная</a>
+      <span>/</span>
+      <span class="text-neutral-900 font-medium">Каталог</span>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-[#E7E2DA]">
+      <div>
+        <h1 id="catalog-search-title" class="text-2xl sm:text-3xl md:text-4xl font-serif">Каталог женской одежды</h1>
+        <span id="catalog-total-count" class="text-xs text-neutral-500 mt-1 block">Загрузка...</span>
+      </div>
+
+      <!-- Controls: Mobile filter button & Sort -->
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+        <button class="md:hidden btn btn-secondary btn-sm flex items-center gap-2" onclick="window.Modal.open('mobile-filter-drawer')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+          Фильтры
+        </button>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-neutral-500 hidden sm:inline">Сортировка:</span>
+          <select id="catalog-sort-select" class="form-input text-xs py-2 px-3 bg-white w-40 sm:w-48">
+            <option value="newest">По новизне</option>
+            <option value="popular">По популярности</option>
+            <option value="price_asc">Сначала дешевле</option>
+            <option value="price_desc">Сначала дороже</option>
+            <option value="discount">По размеру скидки</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Catalog Content -->
+  <div class="container mx-auto px-4 pb-20">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      
+      <!-- Desktop Filters Sidebar -->
+      <aside class="hidden md:block space-y-6">
+        
+        <!-- Category Filter -->
+        <div class="bg-white p-5 rounded-xl border border-[#E7E2DA]">
+          <h3 class="font-serif text-lg font-semibold mb-3">Категории</h3>
+          <div id="filter-categories-list" class="space-y-1"></div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="bg-white p-5 rounded-xl border border-[#E7E2DA]">
+          <h3 class="font-serif text-lg font-semibold mb-3">Цена (₽)</h3>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <input type="number" id="filter-price-min" placeholder="От" class="form-input text-xs py-1.5 px-2">
+            <input type="number" id="filter-price-max" placeholder="До" class="form-input text-xs py-1.5 px-2">
+          </div>
+        </div>
+
+        <!-- Sizes -->
+        <div class="bg-white p-5 rounded-xl border border-[#E7E2DA]">
+          <h3 class="font-serif text-lg font-semibold mb-3">Размер</h3>
+          <div id="filter-sizes-list" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Colors -->
+        <div class="bg-white p-5 rounded-xl border border-[#E7E2DA]">
+          <h3 class="font-serif text-lg font-semibold mb-3">Цвет</h3>
+          <div id="filter-colors-list" class="space-y-1 max-h-48 overflow-y-auto"></div>
+        </div>
+
+        <!-- Checkbox Options -->
+        <div class="bg-white p-5 rounded-xl border border-[#E7E2DA] space-y-3">
+          <label class="flex items-center gap-2 text-xs cursor-pointer">
+            <input type="checkbox" id="filter-in-stock" class="rounded border-[#E7E2DA]">
+            <span>Только в наличии</span>
+          </label>
+          <label class="flex items-center gap-2 text-xs cursor-pointer text-rose-600 font-medium">
+            <input type="checkbox" id="filter-on-sale" class="rounded border-[#E7E2DA]">
+            <span>Товары со скидкой</span>
+          </label>
+        </div>
+
+        <button onclick="resetFilters()" class="btn btn-secondary btn-sm w-full py-2.5">Сбросить фильтры</button>
+      </aside>
+
+      <!-- Products Grid & Pagination -->
+      <main class="md:col-span-3">
+        <div id="catalog-products-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <!-- Dynamic Products -->
+        </div>
+
+        <div id="catalog-pagination"></div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Mobile Filters Drawer -->
+  <div id="mobile-filter-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('mobile-filter-drawer')">
+    <div class="drawer-content p-6 overflow-y-auto">
+      <div class="flex justify-between items-center pb-4 border-b border-[#E7E2DA] mb-6">
+        <h3 class="font-serif text-xl font-semibold">Фильтры</h3>
+        <button onclick="window.Modal.close('mobile-filter-drawer')" class="text-neutral-500 text-lg">✕</button>
+      </div>
+      <div class="space-y-6 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">Цена</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" id="m-filter-price-min" placeholder="От" class="form-input text-xs" oninput="document.getElementById('filter-price-min').value = this.value; document.getElementById('filter-price-min').dispatchEvent(new Event('input'))">
+            <input type="number" id="m-filter-price-max" placeholder="До" class="form-input text-xs" oninput="document.getElementById('filter-price-max').value = this.value; document.getElementById('filter-price-max').dispatchEvent(new Event('input'))">
+          </div>
+        </div>
+        <button onclick="window.Modal.close('mobile-filter-drawer')" class="btn btn-primary w-full py-3">Применить фильтры</button>
+        <button onclick="resetFilters(); window.Modal.close('mobile-filter-drawer')" class="btn btn-secondary w-full py-2.5">Сбросить все</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer & Drawers -->
+  <footer class="bg-[#161616] text-[#FAF8F5] py-12 mt-auto">
+    <div class="container mx-auto px-4 text-center text-xs text-neutral-400">
+      © 2026 Female-Fabric. Все права защищены.
+    </div>
+  </footer>
+
+  <div class="mobile-nav-bar">
+    <a href="/" class="flex flex-col items-center text-[10px] text-neutral-600">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span>Главная</span>
+    </a>
+    <a href="/catalog" class="flex flex-col items-center text-[10px] text-neutral-900 font-bold">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+      <span>Каталог</span>
+    </a>
+    <button onclick="window.Modal.open('cart-drawer')" class="flex flex-col items-center text-[10px] text-neutral-600 relative">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="cart-badge-count absolute -top-1 right-2 bg-neutral-900 text-white text-[9px] font-bold w-4 h-4 rounded-full items-center justify-center hidden">0</span>
+      <span>Корзина</span>
+    </button>
+    <a href="/profile" class="flex flex-col items-center text-[10px] text-neutral-600">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Профиль</span>
+    </a>
+  </div>
+
+  <!-- Cart Side Drawer & Auth Modal -->
+  <div id="cart-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('cart-drawer')">
+    <div class="drawer-content">
+      <div class="p-4 border-b border-[#E7E2DA] flex justify-between items-center">
+        <h3 class="font-serif text-xl font-semibold">Корзина покупок</h3>
+        <button onclick="window.Modal.close('cart-drawer')" class="text-neutral-500 text-lg">✕</button>
+      </div>
+      <div id="cart-drawer-freeship" class="p-3 bg-[#FAF8F5] border-b border-[#E7E2DA]"></div>
+      <div id="cart-drawer-items" class="flex-1 overflow-y-auto p-4"></div>
+      <div id="cart-drawer-empty" class="hidden p-8 text-center my-auto">
+        <p class="text-sm text-neutral-500 mb-4">Ваша корзина пуста</p>
+        <a href="/catalog" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary btn-sm">Перейти к покупкам</a>
+      </div>
+      <div id="cart-drawer-footer" class="p-4 border-t border-[#E7E2DA] bg-[#FAF8F5]">
+        <div class="flex justify-between items-center mb-4 text-base font-semibold">
+          <span>Итого:</span>
+          <span id="cart-drawer-subtotal">0 ₽</span>
+        </div>
+        <a href="/checkout" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary w-full py-3">Оформить заказ</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="auth-modal" class="drawer-overlay flex items-center justify-center" onclick="if(event.target === this) window.Modal.close('auth-modal')">
+    <div class="modal-dialog p-6 bg-white relative max-w-md w-full">
+      <button onclick="window.Modal.close('auth-modal')" class="absolute top-4 right-4 text-neutral-400 text-lg">✕</button>
+      <div class="flex border-b border-[#E7E2DA] mb-6">
+        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 active">Вход</button>
+        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent">Регистрация</button>
+      </div>
+      <form id="auth-form-login" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-neutral-700 mb-1">Email</label>
+          <input type="email" id="login-email" required class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-700 mb-1">Пароль</label>
+          <input type="password" id="login-password" required class="form-input text-sm">
+        </div>
+        <button type="submit" class="btn btn-primary w-full py-3">Войти</button>
+      </form>
+      <form id="auth-form-register" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-medium text-neutral-700 mb-1">Ваше имя</label>
+          <input type="text" id="reg-name" required class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-700 mb-1">Email</label>
+          <input type="email" id="reg-email" required class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-700 mb-1">Пароль</label>
+          <input type="password" id="reg-password" required minlength="6" class="form-input text-sm">
+        </div>
+        <button type="submit" class="btn btn-primary w-full py-3">Зарегистрироваться</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="mobile-menu-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('mobile-menu-drawer')">
+    <div class="drawer-content left">
+      <div class="p-4 border-b border-[#E7E2DA] flex justify-between items-center">
+        <span class="font-serif text-xl font-semibold">Меню</span>
+        <button onclick="window.Modal.close('mobile-menu-drawer')" class="text-neutral-500 text-lg">✕</button>
+      </div>
+      <div class="p-4 space-y-4 text-base font-medium">
+        <a href="/catalog" class="block py-2 border-b border-[#F0EDE8]">Весь каталог</a>
+        <a href="/catalog?category=dresses" class="block py-2 border-b border-[#F0EDE8]">Платья</a>
+        <a href="/catalog?category=blouses" class="block py-2 border-b border-[#F0EDE8]">Блузки и рубашки</a>
+        <a href="/catalog?category=suits" class="block py-2 border-b border-[#F0EDE8]">Костюмы и жакеты</a>
+        <a href="/catalog?category=trousers" class="block py-2 border-b border-[#F0EDE8]">Брюки и джинсы</a>
+        <a href="/catalog?category=outerwear" class="block py-2 border-b border-[#F0EDE8]">Верхняя одежда</a>
+        <a href="/catalog?on_sale=true" class="block py-2 text-rose-600 font-semibold">Распродажа (Sale)</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="/static/js/components/toast.js"></script>
+  <script src="/static/js/components/modal.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/store.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/pages/catalog.js"></script>
+</body>
+</html>
