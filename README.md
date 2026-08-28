@@ -155,3 +155,4 @@ npx wrangler deploy
 * **Покупатель:**
   * **Email:** `user@female-fabric.ru`
   * **Пароль:** `User123!`
+
