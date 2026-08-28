@@ -1,4 +1,4 @@
-﻿import io
+import io
 import sys
 from PIL import Image
 from fastapi.testclient import TestClient
