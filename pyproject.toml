@@ -9,7 +9,7 @@ dependencies = [
     "pydantic>=2.6.0",
     "sqlalchemy>=2.0.0",
     "PyJWT>=2.8.0",
-    "bcrypt>=4.1.0",
+    "passlib>=1.7.4",
     "pillow>=10.2.0",
     "python-multipart>=0.0.9",
     "email-validator>=2.1.0",
@@ -24,3 +24,6 @@ dev = [
     "uvicorn>=0.28.0",
     "pytest>=8.0.0"
 ]
+
+[tool.workers-py]
+include = ["app", "src", "scripts"]

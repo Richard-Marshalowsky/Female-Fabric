@@ -1,17 +1,16 @@
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Any
-import bcrypt
+from passlib.hash import bcrypt
 import jwt
 from app.config import settings
 
 def hash_password(password: str) -> str:
-    salt = bcrypt.gensalt()
-    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+    return bcrypt.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     try:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+        return bcrypt.verify(plain_password, hashed_password)
     except Exception:
         return False
 

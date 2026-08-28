@@ -13,5 +13,10 @@
     "SITE_URL": "https://female-fabric.workers.dev",
     "CORS_ORIGINS": "*",
     "AUTO_CREATE_TABLES": "true"
-  }
+  },
+  "include": [
+    "app/**/*",
+    "src/**/*",
+    "scripts/**/*"
+  ]
 }
