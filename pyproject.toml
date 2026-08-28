@@ -20,13 +20,15 @@ dev = [
     "workers-py",
     "workers-runtime-sdk",
     "uvicorn>=0.28.0",
-    "pytest>=8.0.0" 
-    [build-system]
+    "pytest>=8.0.0"
+]
+
+[build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["app*"]
+[tool.setuptools]
+packages = ["app", "app.api", "app.api.admin", "app.core", "app.models", "app.schemas"]
 
-]
+[tool.setuptools.package-data]
+app = ["static/**/*", "templates/**/*"]
