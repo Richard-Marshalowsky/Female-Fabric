@@ -1,8 +1,7 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "female-fabric",
   "main": "src/worker.py",
-  "compatibility_date": "2026-08-27",
+  "compatibility_date": "2024-01-01",
   "compatibility_flags": ["python_workers"],
   "assets": {
     "directory": "./public/",
@@ -12,6 +11,9 @@
   "vars": {
     "SITE_URL": "https://female-fabric.workers.dev",
     "CORS_ORIGINS": "*",
-    "AUTO_CREATE_TABLES": "true"
+    "AUTO_CREATE_TABLES": "false"
+  },
+  "observability": {
+    "enabled": true
   }
 }

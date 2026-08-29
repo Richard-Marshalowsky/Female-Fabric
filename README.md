@@ -69,33 +69,25 @@ Female-Fabric/
 
 ---
 
-## 🚀 Запуск и Разработка
+## 🚀 Быстрый старт
 
-### Вариант 1: Запуск через Cloudflare Worker (рекомендуемый)
+### ⚡ Самый простой способ (для Windows)
 
-1. Установите `uv` (если не установлен):
-   ```bash
-   pip install uv
-   ```
+**1. Дважды кликните на `run-local.bat`**
 
-2. Запустите локальный сервер Cloudflare Worker:
-   ```bash
-   uv run pywrangler dev
-   ```
+Всё! Приложение откроется на http://localhost:8000
 
-### Вариант 2: Традиционный запуск через Uvicorn
+(Если батник требует доп. действий, см. `SETUP.md`)
 
-1. Установите зависимости:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 📖 Подробнее
 
-2. Запустите сервер:
-   ```bash
-   python run.py
-   ```
-   Сервер доступен по адресу: `http://localhost:8000`  
-   Документация Swagger: `http://localhost:8000/docs`
+Полная пошаговая инструкция: **[SETUP.md](./SETUP.md)**
+
+Там же:
+- ✓ Как установить все программы
+- ✓ Как запустить приложение
+- ✓ Что делать если что-то не работает
+- ✓ Как деплоить на Cloudflare
 
 ---
 
@@ -111,39 +103,33 @@ python test_app.py
 
 ## ☁️ Развертывание в Cloudflare Workers
 
-### 1. Подготовка базы данных в Supabase
+### Краткая инструкция
 
-1. Создайте бесплатный проект на [supabase.com](https://supabase.com).
-2. В **SQL Editor** выполните файл `supabase-schema.sql` или запустите локально миграцию:
+1. **Установите инструменты** (см. `INSTALL_TOOLS.md`):
+   - Node.js и npm
+   - Wrangler CLI: `npm install -g wrangler`
+   - uv (опционально): `pip install uv`
+
+2. **Настройте Supabase** (подробнее в `SUPABASE_SETUP.md`):
+   - Создайте проект на [supabase.com](https://supabase.com)
+   - Выполните SQL из `supabase-schema.sql`
+   - Получите Connection String (Session mode, порт 6543)
+
+3. **Установите секреты Cloudflare**:
    ```bash
-   DATABASE_URL="postgresql+pg8000://postgres:ВАШ_ПАРОЛЬ@db.ВАШ_REF.supabase.co:5432/postgres" python scripts/init_db.py
+   wrangler login
+   wrangler secret put SECRET_KEY
+   wrangler secret put DATABASE_URL
    ```
-3. Скопируйте connection string (URI) вашей базы данных.
 
-### 2. Настройка секретов Cloudflare
+4. **Деплой**:
+   ```bash
+   uv run pywrangler deploy
+   # или
+   wrangler deploy
+   ```
 
-Установите переменные окружения через Wrangler:
-
-```bash
-npx wrangler secret put SECRET_KEY
-npx wrangler secret put DATABASE_URL
-```
-
-*(Опционально)* Если вы используете Supabase Storage для загрузки картинок:
-```bash
-npx wrangler secret put SUPABASE_URL
-npx wrangler secret put SUPABASE_KEY
-```
-
-### 3. Деплой приложения
-
-```bash
-uv run pywrangler deploy
-```
-или через стандартный Wrangler:
-```bash
-npx wrangler deploy
-```
+**Подробная инструкция:** см. файлы `QUICKSTART.md` и `SUPABASE_SETUP.md`
 
 ---
 
