@@ -6,4 +6,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from app.main import app
+from app.main import app, ensure_db_initialized
+
+# Ensure tables & seed data are created on cold start
+ensure_db_initialized()

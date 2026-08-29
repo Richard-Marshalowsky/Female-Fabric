@@ -66,19 +66,34 @@ app.include_router(admin_orders_router)
 app.include_router(admin_users_router)
 app.include_router(admin_uploads_router)
 
-# Startup event: create tables and seed DB only when explicitly enabled
-@app.on_event("startup")
-def startup_event():
+# Auto-initialize database tables and seed data for serverless environments (Vercel)
+def ensure_db_initialized():
     if settings.AUTO_CREATE_TABLES:
         try:
             Base.metadata.create_all(bind=engine)
             db = SessionLocal()
             try:
-                seed_database(db)
+                from app.models.category import Category
+                if db.query(Category).count() == 0:
+                    seed_database(db)
             finally:
                 db.close()
         except Exception as e:
-            print(f"[Startup Warning] Database initialization skipped or deferred: {e}")
+            print(f"[DB Init Warning] Initialization note: {e}")
+
+# Run once on module import
+ensure_db_initialized()
+
+@app.on_event("startup")
+def startup_event():
+    ensure_db_initialized()
+
+@app.middleware("http")
+async def ensure_db_middleware(request: Request, call_next):
+    # Quick fallback in case cold start skipped module-level init
+    if request.url.path.startswith("/api/"):
+        ensure_db_initialized()
+    return await call_next(request)
 
 # HTML Pages Routes
 @app.get("/", response_class=HTMLResponse)
