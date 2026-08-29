@@ -38,13 +38,13 @@ async function loadCategoriesFilter() {
     container.innerHTML = `
       <label class="filter-radio-item" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.875rem; padding:4px 0;">
         <input type="radio" name="cat-filter" value="" ${!currentFilters.category_slug ? 'checked' : ''} onchange="selectCategory(null)">
-        <span>Усі категорії</span>
+        <span>${window.I18N ? window.I18N.t("cat_all") : "Усі категорії"}</span>
       </label>
       ${categories.map(c => `
         <label class="filter-radio-item" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:0.875rem; padding:4px 0;">
           <div style="display:flex; align-items:center; gap:8px;">
             <input type="radio" name="cat-filter" value="${c.slug}" ${currentFilters.category_slug === c.slug ? 'checked' : ''} onchange="selectCategory('${c.slug}')">
-            <span>${c.name}</span>
+            <span>${window.I18N ? window.I18N.t("cat_" + c.slug) || c.name : c.name}</span>
           </div>
           <span style="color:#A8A29E; font-size:0.75rem;">${c.products_count || 0}</span>
         </label>
@@ -178,7 +178,7 @@ function renderDynamicFilterOptions(sizes, colors) {
     colorsContainer.innerHTML = colors.map(c => `
       <div style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.813rem; padding:3px 0;" onclick="toggleColorFilter('${c.name}', this)">
         <span class="color-dot ${currentFilters.colors.includes(c.name) ? 'active' : ''}" style="background:${c.code}; width:18px; height:18px;"></span>
-        <span>${c.name}</span>
+        <span>${window.I18N ? window.I18N.t("cat_" + c.slug) || c.name : c.name}</span>
       </div>
     `).join('');
   }
@@ -317,3 +317,12 @@ window.goToPage = (page) => {
   loadCatalogProducts();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+
+// Re-render categories and products on language switch
+if (window.Store) {
+  window.Store.on('lang:changed', () => {
+    loadCategoriesFilter();
+    loadCatalogProducts();
+  });
+}

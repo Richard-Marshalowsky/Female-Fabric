@@ -1,4 +1,4 @@
-﻿/* Female-Fabric Luxury Fashion Store - Main Stylesheet */
+/* Female-Fabric Luxury Fashion Store - Main Stylesheet */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -194,6 +194,7 @@ button, input, select, textarea {
 }
 
 /* Drawers & Modals */
+.modal-overlay,
 .drawer-overlay {
   position: fixed;
   inset: 0;
@@ -204,6 +205,7 @@ button, input, select, textarea {
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
+.modal-overlay.active,
 .drawer-overlay.active {
   opacity: 1;
   visibility: visible;
@@ -250,7 +252,8 @@ button, input, select, textarea {
   visibility: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.modal-overlay.active .modal-dialog {
+.modal-overlay.active .modal-dialog,
+.drawer-overlay.active .modal-dialog {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, -50%) scale(1);

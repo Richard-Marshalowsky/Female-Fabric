@@ -28,7 +28,7 @@ async function loadProductDetail(slug) {
     const breadcrumbCategory = document.getElementById('product-bc-category');
     const breadcrumbName = document.getElementById('product-bc-name');
     if (breadcrumbCategory) {
-      breadcrumbCategory.textContent = product.category_name || 'Каталог';
+      breadcrumbCategory.textContent = (window.I18N ? window.I18N.t('cat_' + product.category_slug) : null) || product.category_name || 'Каталог';
       breadcrumbCategory.href = `/catalog?category=${product.category_slug}`;
     }
     if (breadcrumbName) breadcrumbName.textContent = product.name;

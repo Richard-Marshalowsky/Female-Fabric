@@ -16,7 +16,7 @@ async function loadHomeCategories() {
         <img src="${cat.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800'}" alt="${cat.name}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);" class="category-img">
         <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);"></div>
         <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; color:#FFF;">
-          <h3 style="font-size:1.375rem; font-weight:500; font-family:var(--font-serif); margin-bottom:4px;">${cat.name}</h3>
+          <h3 style="font-size:1.375rem; font-weight:500; font-family:var(--font-serif); margin-bottom:4px;">${window.I18N ? window.I18N.t("cat_" + cat.slug) || cat.name : cat.name}</h3>
           <span style="font-size:0.813rem; opacity:0.85;">${cat.products_count || 0} моделей</span>
         </div>
       </a>
@@ -110,4 +110,12 @@ function renderProductGrid(container, products) {
       </div>
     </div>
   `).join('');
+}
+
+
+// Re-render categories on language switch
+if (window.Store) {
+  window.Store.on('lang:changed', () => {
+    loadHomeCategories();
+  });
 }
