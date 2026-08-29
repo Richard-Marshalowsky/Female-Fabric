@@ -2,7 +2,14 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-UPLOAD_DIR = BASE_DIR / 'app' / 'static' / 'uploads'
+IS_VERCEL = bool(os.getenv('VERCEL'))
+
+if IS_VERCEL:
+    TMP_DIR = Path('/tmp')
+    UPLOAD_DIR = TMP_DIR / 'uploads'
+else:
+    UPLOAD_DIR = BASE_DIR / 'app' / 'static' / 'uploads'
+
 STATIC_DIR = BASE_DIR / 'app' / 'static'
 TEMPLATES_DIR = BASE_DIR / 'app' / 'templates'
 PUBLIC_DIR = BASE_DIR / 'public'
@@ -17,7 +24,7 @@ class Settings:
     PROJECT_DESCRIPTION: str = 'Интернет-магазин современной женской одежды Female-Fabric'
     VERSION: str = '1.0.0'
     
-    SITE_URL: str = os.getenv('SITE_URL', 'https://female-fabric.workers.dev').rstrip('/')
+    SITE_URL: str = os.getenv('SITE_URL', 'https://female-fabric.vercel.app').rstrip('/')
     SECRET_KEY: str = os.getenv('SECRET_KEY', 'female-fabric-super-secure-secret-key-2026-xyz987')
     ALGORITHM: str = 'HS256'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
@@ -25,7 +32,8 @@ class Settings:
     CORS_ORIGINS: list[str] = [o.strip() for o in os.getenv('CORS_ORIGINS', '*').split(',') if o.strip()]
     
     # Database
-    DATABASE_URL: str = os.getenv('DATABASE_URL', f'sqlite:///{BASE_DIR}/female_fabric.db')
+    default_db = f'sqlite:////tmp/female_fabric.db' if IS_VERCEL else f'sqlite:///{BASE_DIR}/female_fabric.db'
+    DATABASE_URL: str = os.getenv('DATABASE_URL', default_db)
     AUTO_CREATE_TABLES: bool = os.getenv('AUTO_CREATE_TABLES', 'true').lower() in ('true', '1', 't', 'yes')
     
     # Uploads & Assets
@@ -36,13 +44,13 @@ class Settings:
     MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5 MB
     ALLOWED_IMAGE_TYPES: list[str] = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
     
-    # Supabase Storage Integration (for Cloudflare Workers uploads)
+    # Supabase Storage Integration
     SUPABASE_URL: str = os.getenv('SUPABASE_URL', '').rstrip('/')
     SUPABASE_KEY: str = os.getenv('SUPABASE_KEY', '')
     SUPABASE_STORAGE_BUCKET: str = os.getenv('SUPABASE_STORAGE_BUCKET', 'uploads')
     
     # Store settings
-    FREE_SHIPPING_THRESHOLD: float = 5000.0  # Бесплатная доставка от 5000 руб
+    FREE_SHIPPING_THRESHOLD: float = 5000.0
     DEFAULT_SHIPPING_COST: float = 390.0
 
 settings = Settings()
