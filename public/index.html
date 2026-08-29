@@ -24,10 +24,10 @@
     "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800",
     "description": "Интернет-магазин современной женской одежды премиального качества",
     "url": "http://localhost:8000",
-    "telephone": "+7-999-000-00-01",
+    "telephone": "+380-99-000-0001",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": "Москва",
+      "addressLocality": "Київ",
       "addressCountry": "RU"
     },
     "priceRange": "$$"
@@ -41,7 +41,7 @@
 
   <!-- Top Announcement Bar -->
   <div class="bg-[#121212] text-[#FAF8F5] text-xs py-2 text-center tracking-wider">
-    Бесплатная доставка с примеркой при заказе от 5 000 ₽ | Скидка 10% на первый заказ
+    Бесплатная доставка с примеркой при заказе от 5 000 ₴ | Скидка 10% на первый заказ
   </div>
 
   <!-- Header -->
@@ -69,7 +69,7 @@
       </nav>
 
       <!-- Right Action Icons & Search -->
-      <div class="flex items-center space-x-4">
+      <div class="site-header-actions flex items-center space-x-4">
         <!-- Live Search Container -->
         <div class="search-container relative hidden sm:block w-48 lg:w-64">
           <input type="text" placeholder="Поиск одежды..." class="site-search-input w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#E7E2DA] rounded-full focus:outline-none focus:border-neutral-900">
@@ -219,7 +219,7 @@
           </div>
           <div>
             <h4 class="font-semibold text-sm mb-1">Быстрая доставка</h4>
-            <p class="text-xs text-neutral-500 leading-relaxed">Доставка по всей России курьером или в пункты выдачи СДЭК.</p>
+            <p class="text-xs text-neutral-500 leading-relaxed">Доставка по всей Україні курьером или в пункты выдачи СДЭК.</p>
           </div>
         </div>
 
@@ -258,7 +258,7 @@
             Интернет-магазин женской одежды. Лаконичность, качество и эстетика на каждый день.
           </p>
           <div class="text-xs text-neutral-400">
-            <div>Тел: +7 (999) 000-00-01</div>
+            <div>Тел: +380 (99) 000-00-01</div>
             <div>Email: support@female-fabric.ru</div>
           </div>
         </div>
@@ -347,7 +347,7 @@
       <div id="cart-drawer-footer" class="p-4 border-t border-[#E7E2DA] bg-[#FAF8F5]">
         <div class="flex justify-between items-center mb-4 text-base font-semibold">
           <span>Итого:</span>
-          <span id="cart-drawer-subtotal">0 ₽</span>
+          <span id="cart-drawer-subtotal">0 ₴</span>
         </div>
         <div class="flex flex-col gap-2">
           <a href="/checkout" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary w-full py-3">Оформить заказ</a>
@@ -396,7 +396,7 @@
         </div>
         <div>
           <label class="block text-xs font-medium text-neutral-700 mb-1">Телефон</label>
-          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+7 (999) 000-00-00">
+          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+380 (99) 000-00-00">
         </div>
         <div>
           <label class="block text-xs font-medium text-neutral-700 mb-1">Пароль (минимум 6 символов)</label>
