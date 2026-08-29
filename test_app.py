@@ -58,7 +58,7 @@ def run_all_tests():
     print("  [OK] Customer registration, login, JWT token verification passed")
 
     # Admin Login
-    admin_login_res = client.post("/api/auth/login", json={"email": "admin@female-fabric.ru", "password": "Admin123!"})
+    admin_login_res = client.post("/api/auth/login", json={"email": "admin@female-fabric.ua", "password": "Admin123!"})
     assert admin_login_res.status_code == 200, f"Admin login failed: {admin_login_res.text}"
     admin_token = admin_login_res.json()["access_token"]
     admin_headers = {"Authorization": f"Bearer {admin_token}"}
@@ -84,7 +84,7 @@ def run_all_tests():
     assert all(p["category_slug"] == "dresses" for p in dresses_res.json()["items"])
 
     # Search
-    search_res = client.get("/api/products?q=шелк")
+    search_res = client.get("/api/products?q=шовк")
     assert search_res.status_code == 200
     assert search_res.json()["total"] > 0
 

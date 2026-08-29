@@ -54,8 +54,8 @@ async function loadUserOrders() {
     if (orders.length === 0) {
       container.innerHTML = `
         <div style="text-align:center; padding:40px; background:#FFF; border-radius:12px; border:1px solid #E5E0D8;">
-          <p style="color:#78716C; margin-bottom:16px;">У вас пока нет заказов</p>
-          <a href="/catalog" class="btn btn-primary btn-sm">Перейти к покупкам</a>
+          <p style="color:#78716C; margin-bottom:16px;">У вас поки немає замовлень</p>
+          <a href="/catalog" class="btn btn-primary btn-sm">Перейти до покупок</a>
         </div>
       `;
       return;
@@ -70,14 +70,14 @@ async function loadUserOrders() {
       else if (order.status === 'Доставлен') statusColor = '#16A34A';
       else if (order.status === 'Отменён') statusColor = '#DC2626';
 
-      const dateStr = new Date(order.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      const dateStr = new Date(order.created_at).toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
 
       return `
         <div style="background:#FFF; border-radius:12px; border:1px solid #E5E0D8; padding:20px; margin-bottom:16px;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; border-bottom:1px solid #F0EDE8; padding-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div>
               <div style="font-weight:700; font-size:1.125rem;">Замовлення ${order.order_number}</div>
-              <div style="font-size:0.813rem; color:#78716C;">от ${dateStr}</div>
+              <div style="font-size:0.813rem; color:#78716C;">від ${dateStr}</div>
             </div>
             <div style="text-align:right;">
               <span style="background:${statusColor}15; color:${statusColor}; font-weight:600; font-size:0.813rem; padding:4px 10px; border-radius:6px; display:inline-block; margin-bottom:4px;">
@@ -121,7 +121,7 @@ async function loadUserAddresses() {
   try {
     const addresses = await window.API.getAddresses();
     if (addresses.length === 0) {
-      container.innerHTML = '<p style="color:#78716C;">У вас пока нет сохраненных адресов</p>';
+      container.innerHTML = '<p style="color:#78716C;">У вас поки немає збережених адрес</p>';
       return;
     }
 

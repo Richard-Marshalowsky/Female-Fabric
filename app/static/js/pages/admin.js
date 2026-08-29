@@ -432,7 +432,7 @@ window.viewAdminOrder = (orderId) => {
     <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid #E5E0D8; padding-bottom:12px;">
       <div>
         <h4 style="font-size:1.125rem; font-weight:700;">Заказ ${o.order_number}</h4>
-        <div style="font-size:0.813rem; color:#78716C;">Дата: ${new Date(o.created_at).toLocaleString('ru-RU')}</div>
+        <div style="font-size:0.813rem; color:#78716C;">Дата: ${new Date(o.created_at).toLocaleString('uk-UA')}</div>
       </div>
       <div style="text-align:right;">
         <div style="font-weight:700; font-size:1.125rem;">${window.Store.formatPrice(o.total_amount)}</div>

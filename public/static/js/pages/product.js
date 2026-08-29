@@ -67,10 +67,10 @@ async function loadProductDetail(slug) {
       if (specsList) {
         specsList.innerHTML = Object.entries(product.details).map(([k, v]) => {
           let label = k;
-          if (k === 'composition') label = 'Состав';
-          else if (k === 'fit') label = 'Посадка и крой';
+          if (k === 'composition') label = 'Склад';
+          else if (k === 'fit') label = 'Посадка та крій';
           else if (k === 'season') label = 'Сезон';
-          else if (k === 'care') label = 'Уход';
+          else if (k === 'care') label = 'Догляд';
           return `
             <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #F0EDE8; font-size:0.875rem;">
               <span style="color:#78716C;">${label}:</span>
@@ -108,7 +108,7 @@ async function loadProductDetail(slug) {
     }
 
   } catch (err) {
-    if (loader) loader.innerHTML = '<div style="color:#B91C1C; text-align:center; padding:40px;">Товар не найден</div>';
+    if (loader) loader.innerHTML = '<div style="color:#B91C1C; text-align:center; padding:40px;">Товар не знайдено</div>';
     console.error(err);
   }
 }
@@ -190,9 +190,9 @@ function updateStockDisplay(product) {
   }
 
   if (stock > 5) {
-    stockEl.innerHTML = `<span style="color:#15803D; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#15803D; border-radius:50%;"></span> В наличии (${stock} шт.)</span>`;
+    stockEl.innerHTML = `<span style="color:#15803D; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#15803D; border-radius:50%;"></span> В наявності (${stock} шт.)</span>`;
   } else if (stock > 0) {
-    stockEl.innerHTML = `<span style="color:#D97706; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#D97706; border-radius:50%;"></span> Осталось мало (всего ${stock} шт.)</span>`;
+    stockEl.innerHTML = `<span style="color:#D97706; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#D97706; border-radius:50%;"></span> Залишилося мало (усього ${stock} шт.)</span>`;
   } else {
     stockEl.innerHTML = `<span style="color:#B91C1C; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#B91C1C; border-radius:50%;"></span> Немає в наявності</span>`;
   }
@@ -207,7 +207,7 @@ window.changeProductQty = (delta) => {
 window.handleAddToCart = async () => {
   if (!currentProduct) return;
   if (!selectedSize && currentProduct.sizes && currentProduct.sizes.length > 0) {
-    window.Toast.warning('Пожалуйста, выберите размер');
+    window.Toast.warning('Будь ласка, оберіть розмір');
     return;
   }
 
@@ -215,7 +215,7 @@ window.handleAddToCart = async () => {
   try {
     if (btn) {
       btn.disabled = true;
-      btn.textContent = 'Добавление...';
+      btn.textContent = 'Додавання...';
     }
 
     const updatedCart = await window.API.addToCart(
@@ -227,10 +227,10 @@ window.handleAddToCart = async () => {
 
     window.Store.cart = updatedCart;
     window.Store.emit('cart:updated', updatedCart);
-    window.Toast.success(`«${currentProduct.name}» добавлен в корзину`);
+    window.Toast.success(`«${currentProduct.name}» додано в кошик`);
     window.Modal?.open('cart-drawer');
   } catch (err) {
-    window.Toast.error(err.message || 'Не удалось добавить в корзину');
+    window.Toast.error(err.message || 'Не вдалося додати в кошик');
   } finally {
     if (btn) {
       btn.disabled = false;
@@ -241,7 +241,7 @@ window.handleAddToCart = async () => {
 
 window.openOneClickModal = () => {
   if (!selectedSize && currentProduct?.sizes?.length > 0) {
-    window.Toast.warning('Пожалуйста, выберите размер');
+    window.Toast.warning('Будь ласка, оберіть розмір');
     return;
   }
   const modalProdName = document.getElementById('one-click-prod-name');
@@ -263,14 +263,14 @@ window.submitOneClickOrder = async (e) => {
   try {
     const orderData = {
       first_name: name,
-      last_name: 'Покупатель',
+      last_name: 'Покупець',
       phone: phone,
-      email: 'oneclick@female-fabric.ru',
-      city: 'Москва',
-      address: 'Уточнить при звонке менеджера (Быстрый заказ в 1 клик)',
-      delivery_method: 'Курьер до двери',
-      payment_method: 'При получении',
-      notes: `Быстрый заказ товара: ${currentProduct.name} (${selectedSize}, ${selectedColor})`,
+      email: 'oneclick@female-fabric.ua',
+      city: 'Київ',
+      address: 'Уточнити при дзвінку менеджера (Швидке замовлення в 1 клік)',
+      delivery_method: 'Нова Пошта (Кур'єр)',
+      payment_method: 'Післяплата',
+      notes: `Швидке замовлення товару: ${currentProduct.name} (${selectedSize}, ${selectedColor})`,
       items: [{
         product_id: currentProduct.id,
         size: selectedSize,
@@ -284,6 +284,6 @@ window.submitOneClickOrder = async (e) => {
     window.Modal?.close('one-click-modal');
     window.location.href = `/order-success?order_number=${res.order_number}`;
   } catch (err) {
-    window.Toast.error(err.message || 'Ошибка оформления заказа');
+    window.Toast.error(err.message || 'Помилка оформлення замовлення');
   }
 };

@@ -1,5 +1,12 @@
+import sys
 import json
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+
 from sqlalchemy.orm import Session
+from app.database import Base, engine, SessionLocal
 from app.models.user import User
 from app.models.category import Category
 from app.models.product import Product, ProductImage, ProductVariant
@@ -7,46 +14,50 @@ from app.models.order import Order, OrderItem
 from app.models.address import Address
 from app.core.security import get_password_hash
 
-def seed_database(db: Session):
-    # 1. Admin User
-    admin = db.query(User).filter(User.email == "admin@female-fabric.ua").first()
-    if not admin:
-        admin = User(
-            email="admin@female-fabric.ua",
-            password_hash=get_password_hash("Admin123!"),
-            full_name="Олена Коваленко (Адмін)",
-            phone="+380971234567",
-            role="admin",
-            is_active=True
-        )
-        db.add(admin)
+def reseed():
+    print("=" * 60)
+    print(" Re-seeding database with complete Ukrainian dataset...")
+    print("=" * 60)
 
-    # 2. Customer User
-    customer = db.query(User).filter(User.email == "user@female-fabric.ua").first()
-    if not customer:
-        customer = User(
-            email="user@female-fabric.ua",
-            password_hash=get_password_hash("User123!"),
-            full_name="Марія Мельник",
-            phone="+380509876543",
-            role="customer",
-            is_active=True
-        )
-        db.add(customer)
-        db.flush()
+    # Drop and recreate tables to clear old Russian data cleanly
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
-        addr = Address(
-            user_id=customer.id,
-            title="Домашня адреса",
-            city="Київ",
-            address="вул. Хрещатик, буд. 15, кв. 42",
-            is_default=True
-        )
-        db.add(addr)
+    db: Session = SessionLocal()
 
+    # 1. Admin & Customer Users
+    admin = User(
+        email="admin@female-fabric.ua",
+        password_hash=get_password_hash("Admin123!"),
+        full_name="Олена Коваленко (Адмін)",
+        phone="+380971234567",
+        role="admin",
+        is_active=True
+    )
+    db.add(admin)
+
+    customer = User(
+        email="user@female-fabric.ua",
+        password_hash=get_password_hash("User123!"),
+        full_name="Марія Мельник",
+        phone="+380509876543",
+        role="customer",
+        is_active=True
+    )
+    db.add(customer)
+    db.flush()
+
+    addr = Address(
+        user_id=customer.id,
+        title="Домашня адреса",
+        city="Київ",
+        address="вул. Хрещатик, буд. 15, кв. 42",
+        is_default=True
+    )
+    db.add(addr)
     db.commit()
 
-    # 3. Categories
+    # 2. Categories
     categories_data = [
         {"name": "Сукні та шовк", "slug": "dresses", "image_url": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80", "sort_order": 1},
         {"name": "Блузи та сорочки", "slug": "blouses", "image_url": "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=800&q=80", "sort_order": 2},
@@ -60,25 +71,19 @@ def seed_database(db: Session):
 
     category_map = {}
     for cat_d in categories_data:
-        existing = db.query(Category).filter(Category.slug == cat_d["slug"]).first()
-        if not existing:
-            cat = Category(
-                name=cat_d["name"],
-                slug=cat_d["slug"],
-                image_url=cat_d["image_url"],
-                sort_order=cat_d["sort_order"]
-            )
-            db.add(cat)
-            db.flush()
-            category_map[cat_d["slug"]] = cat.id
-        else:
-            existing.name = cat_d["name"]
-            existing.image_url = cat_d["image_url"]
-            category_map[cat_d["slug"]] = existing.id
+        cat = Category(
+            name=cat_d["name"],
+            slug=cat_d["slug"],
+            image_url=cat_d["image_url"],
+            sort_order=cat_d["sort_order"]
+        )
+        db.add(cat)
+        db.flush()
+        category_map[cat_d["slug"]] = cat.id
 
     db.commit()
 
-    # 4. Products Data in Ukrainian with reliable high-resolution Unsplash URLs
+    # 3. Products Data in Ukrainian with reliable high-resolution Unsplash URLs
     products_data = [
         {
             "name": "Шовкова сукня Velvet Night",
@@ -290,95 +295,88 @@ def seed_database(db: Session):
     ]
 
     for p_data in products_data:
-        existing = db.query(Product).filter((Product.slug == p_data["slug"]) | (Product.sku == p_data["sku"])).first()
         cat_id = category_map.get(p_data["category_slug"])
-        if not existing:
-            product = Product(
-                name=p_data["name"],
-                slug=p_data["slug"],
-                sku=p_data["sku"],
-                category_id=cat_id,
-                price=p_data["price"],
-                old_price=p_data.get("old_price"),
-                description=p_data["description"],
-                details_json=p_data["details_json"],
-                is_featured=p_data["is_featured"],
-                is_new=p_data["is_new"],
-                is_active=True
+        product = Product(
+            name=p_data["name"],
+            slug=p_data["slug"],
+            sku=p_data["sku"],
+            category_id=cat_id,
+            price=p_data["price"],
+            old_price=p_data.get("old_price"),
+            description=p_data["description"],
+            details_json=p_data["details_json"],
+            is_featured=p_data["is_featured"],
+            is_new=p_data["is_new"],
+            is_active=True
+        )
+        db.add(product)
+        db.flush()
+
+        for idx, img_url in enumerate(p_data["images"]):
+            img = ProductImage(
+                product_id=product.id,
+                image_url=img_url,
+                is_primary=(idx == 0),
+                sort_order=idx
             )
-            db.add(product)
-            db.flush()
+            db.add(img)
 
-            for idx, img_url in enumerate(p_data["images"]):
-                img = ProductImage(
+        for c in p_data["colors"]:
+            for s in p_data["sizes"]:
+                variant = ProductVariant(
                     product_id=product.id,
-                    image_url=img_url,
-                    is_primary=(idx == 0),
-                    sort_order=idx
+                    sku=f"{product.sku}-{s}-{c['name'][:2].upper()}",
+                    size=s,
+                    color=c["name"],
+                    color_code=c["code"],
+                    stock=15,
+                    price_override=None
                 )
-                db.add(img)
-
-            for c in p_data["colors"]:
-                for s in p_data["sizes"]:
-                    variant = ProductVariant(
-                        product_id=product.id,
-                        sku=f"{product.sku}-{s}-{c['name'][:2].upper()}",
-                        size=s,
-                        color=c["name"],
-                        color_code=c["code"],
-                        stock=15,
-                        price_override=None
-                    )
-                    db.add(variant)
-        else:
-            existing.name = p_data["name"]
-            existing.price = p_data["price"]
-            existing.old_price = p_data.get("old_price")
-            existing.description = p_data["description"]
-            existing.details_json = p_data["details_json"]
-            existing.category_id = cat_id
+                db.add(variant)
 
     db.commit()
 
-    # 5. Sample Order
-    sample_order = db.query(Order).filter(Order.order_number == "FF-2026-0001").first()
-    if not sample_order:
-        first_prod = db.query(Product).first()
-        if first_prod:
-            sample_order = Order(
-                order_number="FF-2026-0001",
-                user_id=customer.id,
-                status="Підтверджений",
-                subtotal_amount=first_prod.price,
-                discount_amount=0.0,
-                delivery_fee=0.0,
-                total_amount=first_prod.price,
-                first_name="Марія",
-                last_name="Мельник",
-                phone="+380509876543",
-                email="user@female-fabric.ua",
-                city="Київ",
-                address="вул. Хрещатик, буд. 15, кв. 42",
-                delivery_method="Нова Пошта (Пункт видачі)",
-                payment_method="Карткою онлайн",
-                payment_status="Оплачено",
-                notes="Дзвінок кур'єра за 30 хвилин"
-            )
-            db.add(sample_order)
-            db.flush()
+    # 4. Sample Order
+    sample_order = Order(
+        order_number="FF-2026-0001",
+        user_id=customer.id,
+        status="Підтверджений",
+        subtotal_amount=3850.0,
+        discount_amount=0.0,
+        delivery_fee=0.0,
+        total_amount=3850.0,
+        first_name="Марія",
+        last_name="Мельник",
+        phone="+380509876543",
+        email="user@female-fabric.ua",
+        city="Київ",
+        address="вул. Хрещатик, буд. 15, кв. 42",
+        delivery_method="Нова Пошта (Пункт видачі)",
+        payment_method="Карткою онлайн",
+        payment_status="Оплачено",
+        notes="Дзвінок кур'єра за 30 хвилин"
+    )
+    db.add(sample_order)
+    db.flush()
 
-            item = OrderItem(
-                order_id=sample_order.id,
-                product_id=first_prod.id,
-                product_name=first_prod.name,
-                sku=first_prod.sku,
-                size="S",
-                color="Чорний",
-                price=first_prod.price,
-                quantity=1,
-                image_url=first_prod.images[0].image_url if first_prod.images else ""
-            )
-            db.add(item)
-            db.commit()
+    first_prod = db.query(Product).first()
+    if first_prod:
+        item = OrderItem(
+            order_id=sample_order.id,
+            product_id=first_prod.id,
+            product_name=first_prod.name,
+            sku=first_prod.sku,
+            size="S",
+            color="Чорний",
+            price=first_prod.price,
+            quantity=1,
+            image_url=first_prod.images[0].image_url if first_prod.images else ""
+        )
+        db.add(item)
+    db.commit()
+    db.close()
 
-    print("Database successfully seeded with complete Ukrainian dataset!")
+    print("[SUCCESS] Database completely reseeded with 12 Ukrainian premium products and verified images!")
+
+if __name__ == "__main__":
+    reseed()

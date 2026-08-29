@@ -54,7 +54,7 @@ function renderCheckoutSummary(cart) {
   const totalEl = document.getElementById('checkout-total');
 
   if (!cart || !cart.items || cart.items.length === 0) {
-    if (itemsContainer) itemsContainer.innerHTML = '<div style="color:#78716C;">Корзина пуста</div>';
+    if (itemsContainer) itemsContainer.innerHTML = '<div style="color:#78716C;">Кошик порожній</div>';
     return;
   }
 
@@ -95,8 +95,8 @@ async function handleCheckoutSubmit(e) {
   const form = e.target;
   const submitBtn = form.querySelector('button[type="submit"]');
 
-  const deliveryMethod = form.querySelector('input[name="delivery_method"]:checked')?.value || 'Курьер до двери';
-  const paymentMethod = form.querySelector('input[name="payment_method"]:checked')?.value || 'Картой онлайн';
+  const deliveryMethod = form.querySelector('input[name="delivery_method"]:checked')?.value || 'Нова Пошта (Кур'єр)';
+  const paymentMethod = form.querySelector('input[name="payment_method"]:checked')?.value || 'Карткою онлайн';
 
   const orderData = {
     first_name: document.getElementById('checkout-first-name').value.trim(),
