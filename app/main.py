@@ -33,6 +33,8 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+from fastapi.staticfiles import StaticFiles
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -41,6 +43,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files directly in FastAPI
+if settings.STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(settings.STATIC_DIR)), name="static")
+elif settings.PUBLIC_DIR.exists() and (settings.PUBLIC_DIR / "static").exists():
+    app.mount("/static", StaticFiles(directory=str(settings.PUBLIC_DIR / "static")), name="static")
 
 def get_template_html(filename: str) -> str:
     template_path = settings.TEMPLATES_DIR / filename
