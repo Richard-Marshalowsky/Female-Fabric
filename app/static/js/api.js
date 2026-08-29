@@ -1,4 +1,4 @@
-﻿// Centralized API Client for Female-Fabric
+// Centralized API Client for Female-Fabric
 class ApiClient {
   constructor() {
     this.baseUrl = '';
@@ -141,11 +141,13 @@ class ApiClient {
   }
 
   async getFeaturedProducts(limit = 8) {
-    return this.request(`/api/products/featured/list?limit=${limit}`);
+    const data = await this.request(`/api/products?is_featured=true&limit=${limit}`);
+    return data.items || data;
   }
 
   async getNewProducts(limit = 8) {
-    return this.request(`/api/products/new/list?limit=${limit}`);
+    const data = await this.request(`/api/products?is_new=true&limit=${limit}`);
+    return data.items || data;
   }
 
   async getProductDetail(slugOrId) {
