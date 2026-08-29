@@ -86,6 +86,14 @@ window.I18N = {
       cart_added_toast: "додано в кошик",
       cart_remove_item: "Видалити",
       cart_title_page: "Кошик товарів",
+      // Wishlist
+      wishlist_drawer_title: "Список обраного",
+      wishlist_empty: "Ваш список обраного порожній",
+      wishlist_empty_desc: "Тисніть на сердечко на будь-якій картці товару, щоб зберегти його та повернутися пізніше.",
+      wishlist_move_to_cart: "В кошик",
+      wishlist_remove: "Видалити",
+      cart_choose_size: "Обрати розмір",
+
       
       // Catalog & Filters
       catalog_title: "Каталог жіночого одягу",
@@ -272,6 +280,14 @@ window.I18N = {
       cart_added_toast: "добавлен в корзину",
       cart_remove_item: "Удалить",
       cart_title_page: "Корзина товаров",
+      // Wishlist
+      wishlist_drawer_title: "Список избранного",
+      wishlist_empty: "Ваш список избранного пуст",
+      wishlist_empty_desc: "Нажимайте на сердечко на любой карточке товара, чтобы сохранить его и вернуться позже.",
+      wishlist_move_to_cart: "В корзину",
+      wishlist_remove: "Удалить",
+      cart_choose_size: "Выбрать размер",
+
       
       // Catalog & Filters
       catalog_title: "Каталог женской одежды",

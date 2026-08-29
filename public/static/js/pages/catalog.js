@@ -148,7 +148,7 @@ async function loadCatalogProducts() {
             </div>
 
             <a href="/product/${p.slug}" class="btn btn-secondary btn-sm" style="width:100%;">
-              Вибрати розмір
+              ${window.I18N ? window.I18N.t('cart_choose_size') : 'Обрати розмір'}
             </a>
           </div>
         </div>

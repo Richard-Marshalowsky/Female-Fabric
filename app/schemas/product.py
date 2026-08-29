@@ -31,7 +31,7 @@ class ProductVariantResponse(ProductVariantBase):
 
 class ProductBase(BaseModel):
     name: str = Field(..., min_length=2, max_length=255)
-    slug: str = Field(..., min_length=2, max_length=255)
+    slug: Optional[str] = None
     sku: str = Field(..., min_length=2, max_length=100)
     category_id: int
     description: Optional[str] = None

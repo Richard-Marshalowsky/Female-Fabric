@@ -103,13 +103,16 @@ def create_product(
             ))
 
     if prod_in.variants:
-        for v in prod_in.variants:
+        for idx, v in enumerate(prod_in.variants):
+            var_sku = v.sku if v.sku else f"{prod.sku}-{v.size}-{v.color}"
+            if db.query(ProductVariant).filter(ProductVariant.sku == var_sku).first():
+                var_sku = f"{prod.sku}-{v.size}-{v.color}-{prod.id or idx}"
             db.add(ProductVariant(
                 product_id=prod.id,
                 size=v.size,
                 color=v.color,
                 color_code=v.color_code or '#000000',
-                sku=v.sku or f'{prod.sku}-{v.size}-{v.color}',
+                sku=var_sku,
                 stock=v.stock,
                 price_override=v.price_override
             ))
@@ -117,15 +120,15 @@ def create_product(
         db.add(ProductVariant(
             product_id=prod.id,
             size='One Size',
-            color='Универсальный',
+            color='Універсальний',
             color_code='#000000',
-            sku=f'{prod.sku}-STD',
+            sku=f'{prod.sku}-STD-{prod.id or 1}',
             stock=10
         ))
 
     db.commit()
     db.refresh(prod)
-    return {'id': prod.id, 'message': 'Товар успешно создан', 'slug': prod.slug}
+    return {'id': prod.id, 'message': 'Товар успішно створено', 'slug': prod.slug}
 
 @router.put('/{product_id}')
 def update_product(
@@ -136,7 +139,7 @@ def update_product(
 ):
     prod = db.query(Product).filter(Product.id == product_id).first()
     if not prod:
-        raise HTTPException(status_code=404, detail='Товар не найден')
+        raise HTTPException(status_code=404, detail='Товар не знайдено')
 
     if prod_in.name is not None:
         prod.name = prod_in.name.strip()
@@ -173,20 +176,23 @@ def update_product(
 
     if prod_in.variants is not None:
         db.query(ProductVariant).filter(ProductVariant.product_id == prod.id).delete()
-        for v in prod_in.variants:
+        for idx, v in enumerate(prod_in.variants):
+            var_sku = v.sku if v.sku else f"{prod.sku}-{v.size}-{v.color}"
+            if db.query(ProductVariant).filter(ProductVariant.sku == var_sku).first():
+                var_sku = f"{prod.sku}-{v.size}-{v.color}-{prod.id}-{idx}"
             db.add(ProductVariant(
                 product_id=prod.id,
                 size=v.size,
                 color=v.color,
                 color_code=v.color_code or '#000000',
-                sku=v.sku or f'{prod.sku}-{v.size}-{v.color}',
+                sku=var_sku,
                 stock=v.stock,
                 price_override=v.price_override
             ))
 
     db.commit()
     db.refresh(prod)
-    return {'id': prod.id, 'message': 'Товар успешно обновлен'}
+    return {'id': prod.id, 'message': 'Товар успішно оновлено', 'slug': prod.slug}
 
 @router.patch('/{product_id}/status')
 def toggle_product_status(

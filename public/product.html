@@ -48,24 +48,25 @@
           <div id="search-autocomplete-dropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-[#E7E2DA] overflow-hidden z-50"></div>
         </div>
 
-        <!-- Account -->
+        <!-- Account (User Profile / Auth Modal) -->
         <div class="auth-guest-view">
-          <button onclick="window.Modal.open('auth-modal')" class="p-2 text-neutral-800 hover:text-neutral-500 transition" title="Увійти в акаунт">
+          <button onclick="window.Modal.open('auth-modal')" class="p-2 text-neutral-800 hover:text-neutral-500 transition" title="Вхід / Реєстрація">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </button>
         </div>
         <div class="auth-user-view hidden flex items-center space-x-2">
-          <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 flex items-center gap-1 text-xs font-medium" title="Особистий кабінет">
+          <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 flex items-center gap-1.5 text-xs font-semibold" title="Особистий кабінет">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span class="user-name-slot hidden lg:inline" data-i18n="nav_cabinet">Кабінет</span>
           </a>
           <a href="/admin" class="admin-nav-link hidden text-xs bg-neutral-900 text-white px-2.5 py-1 rounded font-medium hover:bg-neutral-800" data-i18n="nav_admin">Адмінка</a>
         </div>
 
-        <!-- Wishlist -->
-        <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Обране">
+        <!-- Wishlist (Saved Favorites with Badge) -->
+        <button onclick="window.openWishlistDrawer()" class="p-2 text-neutral-800 hover:text-neutral-500 relative transition" title="Список обраного">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        </a>
+          <span class="wishlist-badge-count absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center hidden">0</span>
+        </button>
 
         <!-- Cart Button (Opens Drawer) -->
         <button onclick="window.Modal.open('cart-drawer')" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Кошик">
@@ -285,52 +286,96 @@
     </div>
   </div>
 
-  <!-- Auth Modal -->
+  
+  <!-- Wishlist Drawer -->
+  <div id="wishlist-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('wishlist-drawer')">
+    <div class="drawer-content p-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-[#E7E2DA]">
+          <div class="flex items-center gap-2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#E11D48" stroke="#E11D48" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <h3 class="font-serif text-xl" data-i18n="wishlist_drawer_title">Список обраного</h3>
+          </div>
+          <button onclick="window.Modal.close('wishlist-drawer')" class="text-neutral-500 hover:text-neutral-900 text-xl font-light">✕</button>
+        </div>
+
+        <div id="wishlist-drawer-items" class="overflow-y-auto max-h-[calc(100vh-180px)] py-4 space-y-3"></div>
+
+        <div id="wishlist-drawer-empty" class="flex flex-col items-center justify-center text-center py-16 hidden">
+          <div class="w-16 h-16 rounded-full bg-[#FAF8F5] flex items-center justify-center mb-4 text-neutral-400">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <h4 class="font-serif text-lg mb-2" data-i18n="wishlist_empty">Ваш список обраного порожній</h4>
+          <p class="text-xs text-neutral-500 max-w-xs mb-6" data-i18n="wishlist_empty_desc">Тисніть на сердечко на будь-якому товарі, щоб зберегти його та повернутися пізніше.</p>
+          <a href="/catalog" onclick="window.Modal.close('wishlist-drawer')" class="btn btn-primary btn-sm" data-i18n="cart_continue_shopping">Перейти до каталогу</a>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#E7E2DA]">
+        <button onclick="window.Modal.close('wishlist-drawer')" class="btn btn-secondary w-full py-2.5 text-xs font-medium">Продовжити покупки</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacious Modern Auth Modal (Вхід / Реєстрація) -->
   <div id="auth-modal" class="modal-overlay drawer-overlay flex items-center justify-center" onclick="if(event.target === this) window.Modal.close('auth-modal')">
-    <div class="modal-dialog p-6 md:p-8 bg-white relative max-w-md w-full">
-      <button onclick="window.Modal.close('auth-modal')" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-lg">✕</button>
+    <div class="modal-dialog p-8 md:p-10 bg-white relative max-w-lg w-full rounded-2xl shadow-2xl border border-[#E7E2DA]">
+      <button onclick="window.Modal.close('auth-modal')" class="absolute top-5 right-5 text-neutral-400 hover:text-neutral-900 text-2xl font-light">✕</button>
       
+      <div class="text-center mb-6">
+        <div class="font-serif text-2xl tracking-wider uppercase mb-1">Female-Fabric</div>
+        <p class="text-xs text-neutral-500">Преміальний жіночий одяг та естетика стилю</p>
+      </div>
+
       <div class="flex border-b border-[#E7E2DA] mb-6">
-        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 active" data-i18n="auth_login_title">Вхід</button>
-        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent" data-i18n="auth_register_title">Реєстрація</button>
+        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 text-neutral-900 transition" data-i18n="auth_login_title">Вхід</button>
+        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-900 transition" data-i18n="auth_register_title">Реєстрація</button>
+      </div>
+
+      <!-- Quick Demo Login Bar -->
+      <div class="bg-[#FAF8F5] p-3 rounded-lg border border-[#E7E2DA] mb-5 flex items-center justify-between text-xs">
+        <span class="text-neutral-500 font-medium">Швидкий демо-вхід:</span>
+        <div class="flex gap-2">
+          <button type="button" onclick="window.fillDemoLogin('customer')" class="px-2.5 py-1 bg-white border border-[#E7E2DA] rounded font-semibold text-neutral-800 hover:bg-neutral-100 shadow-sm transition">Клієнт</button>
+          <button type="button" onclick="window.fillDemoLogin('admin')" class="px-2.5 py-1 bg-neutral-900 text-white rounded font-semibold hover:bg-neutral-800 shadow-sm transition">Адмін</button>
+        </div>
       </div>
 
       <!-- Login Form -->
       <form id="auth-form-login" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
-          <input type="email" id="login-email" required class="form-input text-sm" placeholder="anna@example.com">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
+          <input type="email" id="login-email" required class="form-input w-full px-4 py-3 text-sm rounded-lg border border-[#E7E2DA] focus:border-neutral-900 focus:outline-none" placeholder="anna@example.com">
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="block text-xs font-medium text-neutral-700" data-i18n="auth_password">Пароль</label>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-700" data-i18n="auth_password">Пароль</label>
             <button type="button" onclick="promptForgotPassword()" class="text-xs text-neutral-500 hover:underline" data-i18n="auth_forgot">Забули пароль?</button>
           </div>
-          <input type="password" id="login-password" required class="form-input text-sm" placeholder="••••••••">
+          <input type="password" id="login-password" required class="form-input w-full px-4 py-3 text-sm rounded-lg border border-[#E7E2DA] focus:border-neutral-900 focus:outline-none" placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_login">Увійти в акаунт</button>
-        <div class="text-[11px] text-neutral-400 text-center">Демо-доступ адміна: admin@female-fabric.ua / Admin123!</div>
+        <button type="submit" class="btn btn-primary w-full py-3.5 font-semibold text-sm rounded-lg shadow-sm mt-2" data-i18n="auth_btn_login">Увійти в акаунт</button>
       </form>
 
       <!-- Register Form -->
       <form id="auth-form-register" class="space-y-4 hidden">
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_name">Ваше ім'я</label>
-          <input type="text" id="reg-name" required class="form-input text-sm" placeholder="Анна Коваленко">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1" data-i18n="auth_name">Ваше ім'я</label>
+          <input type="text" id="reg-name" required class="form-input w-full px-4 py-3 text-sm rounded-lg border border-[#E7E2DA] focus:border-neutral-900 focus:outline-none" placeholder="Олена Мельник">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
-          <input type="email" id="reg-email" required class="form-input text-sm" placeholder="anna@example.com">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
+          <input type="email" id="reg-email" required class="form-input w-full px-4 py-3 text-sm rounded-lg border border-[#E7E2DA] focus:border-neutral-900 focus:outline-none" placeholder="olena@example.com">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_phone">Телефон</label>
-          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+38 (097) 000-00-00">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1" data-i18n="auth_phone">Телефон</label>
+          <input type="tel" id="reg-phone" class="form-input w-full px-4 py-3 text-sm rounded-lg border border-[#E7E2DA] focus:border-neutral-900 focus:outline-none" placeholder="+38 (097) 123-45-67">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_password">Пароль (мінімум 6 символів)</label>
-          <input type="password" id="reg-password" required minlength="6" class="form-input text-sm" placeholder="••••••••">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1" data-i18n="auth_password">Пароль (мінімум 6 символів)</label>
+          <input type="password" id="reg-password" required minlength="6" class="form-input w-full px-4 py-3 text-sm rounded-lg border border-[#E7E2DA] focus:border-neutral-900 focus:outline-none" placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_reg">Зареєструватися</button>
+        <button type="submit" class="btn btn-primary w-full py-3.5 font-semibold text-sm rounded-lg shadow-sm mt-2" data-i18n="auth_btn_reg">Зареєструватися</button>
       </form>
     </div>
   </div>

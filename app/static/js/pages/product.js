@@ -1,4 +1,4 @@
-﻿// Product Detail Page JavaScript
+// Product Detail Page JavaScript
 let currentProduct = null;
 let selectedSize = null;
 let selectedColor = null;
@@ -10,138 +10,158 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!slug) return;
   await loadProductDetail(slug);
+
+  if (window.Store) {
+    window.Store.on('lang:changed', () => {
+      if (currentProduct) {
+        updateProductLocalizedContent(currentProduct);
+      }
+    });
+  }
 });
 
 async function loadProductDetail(slug) {
-  const loader = document.getElementById('product-loader');
-  const content = document.getElementById('product-content');
-
   try {
     const product = await window.API.getProductDetail(slug);
     currentProduct = product;
 
-    if (loader) loader.classList.add('hidden');
-    if (content) content.classList.remove('hidden');
-
     document.title = `${product.name} — Female-Fabric`;
 
-    const breadcrumbCategory = document.getElementById('product-bc-category');
-    const breadcrumbName = document.getElementById('product-bc-name');
-    if (breadcrumbCategory) {
-      breadcrumbCategory.textContent = (window.I18N ? window.I18N.t('cat_' + product.category_slug) : null) || product.category_name || 'Каталог';
-      breadcrumbCategory.href = `/catalog?category=${product.category_slug}`;
+    // Breadcrumbs
+    const bcCat = document.getElementById('product-breadcrumb-cat') || document.getElementById('product-bc-category');
+    const bcName = document.getElementById('product-breadcrumb-name') || document.getElementById('product-bc-name');
+    if (bcCat) {
+      const catTranslated = window.I18N ? window.I18N.t('cat_' + product.category_slug) : null;
+      bcCat.textContent = catTranslated || product.category_name || 'Каталог';
+      bcCat.onclick = () => window.location.href = `/catalog?category=${product.category_slug}`;
     }
-    if (breadcrumbName) breadcrumbName.textContent = product.name;
+    if (bcName) bcName.textContent = product.name;
 
-    renderProductGallery(product);
+    // Category Badge
+    const catBadge = document.getElementById('product-category-badge');
+    if (catBadge) {
+      const catTranslated = window.I18N ? window.I18N.t('cat_' + product.category_slug) : null;
+      catBadge.textContent = catTranslated || product.category_name || 'Одяг';
+    }
 
-    document.getElementById('product-title').textContent = product.name;
-    document.getElementById('product-sku').textContent = `Артикул: ${product.sku}`;
-    document.getElementById('product-price').textContent = window.Store.formatPrice(product.price);
-    
+    // SKU
+    const skuEl = document.getElementById('product-sku');
+    if (skuEl) skuEl.textContent = product.sku;
+
+    // Title
+    const titleEl = document.getElementById('product-title');
+    if (titleEl) titleEl.textContent = product.name;
+
+    // Price & Discount
+    const priceEl = document.getElementById('product-price');
     const oldPriceEl = document.getElementById('product-old-price');
     const discountEl = document.getElementById('product-discount-badge');
-    if (product.old_price && product.old_price > product.price) {
-      oldPriceEl.textContent = window.Store.formatPrice(product.old_price);
-      oldPriceEl.classList.remove('hidden');
-      if (discountEl && product.discount_percent) {
+
+    if (priceEl) priceEl.textContent = window.Store.formatPrice(product.price);
+    if (oldPriceEl) {
+      if (product.old_price && product.old_price > product.price) {
+        oldPriceEl.textContent = window.Store.formatPrice(product.old_price);
+        oldPriceEl.classList.remove('hidden');
+      } else {
+        oldPriceEl.classList.add('hidden');
+      }
+    }
+    if (discountEl) {
+      if (product.discount_percent && product.discount_percent > 0) {
         discountEl.textContent = `-${product.discount_percent}%`;
         discountEl.classList.remove('hidden');
+      } else {
+        discountEl.classList.add('hidden');
       }
-    } else {
-      if (oldPriceEl) oldPriceEl.classList.add('hidden');
-      if (discountEl) discountEl.classList.add('hidden');
     }
 
+    // Gallery
+    renderProductGallery(product);
+
+    // Default Size & Color
     if (product.sizes && product.sizes.length > 0) selectedSize = product.sizes[0];
     if (product.colors && product.colors.length > 0) selectedColor = product.colors[0].name;
 
     renderSizeSelector(product);
     renderColorSelector(product);
-    updateStockDisplay(product);
 
-    document.getElementById('product-description').textContent = product.description || '';
-    
-    if (product.details) {
-      const specsList = document.getElementById('product-specs-list');
-      if (specsList) {
-        specsList.innerHTML = Object.entries(product.details).map(([k, v]) => {
-          let label = k;
-          if (k === 'composition') label = 'Склад';
-          else if (k === 'fit') label = 'Посадка та крій';
-          else if (k === 'season') label = 'Сезон';
-          else if (k === 'care') label = 'Догляд';
-          return `
-            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #F0EDE8; font-size:0.875rem;">
-              <span style="color:#78716C;">${label}:</span>
-              <strong style="text-align:right; max-width:60%; font-weight:500;">${v}</strong>
-            </div>
-          `;
-        }).join('');
-      }
-    }
+    // Description & Specs
+    const descEl = document.getElementById('product-desc') || document.getElementById('product-description');
+    if (descEl) descEl.textContent = product.description || '';
 
-    const favBtn = document.getElementById('product-fav-btn');
-    if (favBtn) {
-      favBtn.classList.toggle('active', product.is_favorite);
-      favBtn.onclick = async () => {
-        const res = await window.Store.toggleFavorite(product.id);
-        favBtn.classList.toggle('active', res);
-      };
-    }
+    renderProductSpecs(product);
 
-    if (product.related_products && product.related_products.length > 0) {
-      const relatedContainer = document.getElementById('product-related-grid');
-      if (relatedContainer) {
-        relatedContainer.innerHTML = product.related_products.map(p => `
-          <div class="product-card" style="background:var(--color-surface); border-radius:12px; overflow:hidden; border:1px solid var(--color-border); display:flex; flex-direction:column;">
-            <a href="/product/${p.slug}" style="display:block; height:240px; position:relative; overflow:hidden; background:#F3EFEA;">
-              <img src="${p.primary_image}" alt="${p.name}" class="img-zoom" style="width:100%; height:100%; object-fit:cover;">
-            </a>
-            <div style="padding:12px;">
-              <a href="/product/${p.slug}" style="font-size:0.875rem; font-weight:500; display:block; margin-bottom:6px; color:#121212; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</a>
-              <div style="font-weight:700; font-size:0.938rem;">${window.Store.formatPrice(p.price)}</div>
-            </div>
-          </div>
-        `).join('');
-      }
-    }
+    // Favorite Button
+    updateFavoriteButtonState(product.id);
+
+    // Similar Products
+    loadSimilarProducts(product);
 
   } catch (err) {
-    if (loader) loader.innerHTML = '<div style="color:#B91C1C; text-align:center; padding:40px;">Товар не знайдено</div>';
-    console.error(err);
+    console.error('Error loading product details:', err);
+    window.Toast?.error('Не вдалося завантажити інформацію про товар');
   }
+}
+
+function updateProductLocalizedContent(product) {
+  const bcCat = document.getElementById('product-breadcrumb-cat') || document.getElementById('product-bc-category');
+  if (bcCat) {
+    const catTranslated = window.I18N.t('cat_' + product.category_slug);
+    bcCat.textContent = catTranslated || product.category_name || 'Каталог';
+  }
+  const catBadge = document.getElementById('product-category-badge');
+  if (catBadge) {
+    const catTranslated = window.I18N.t('cat_' + product.category_slug);
+    catBadge.textContent = catTranslated || product.category_name || 'Одяг';
+  }
+  renderProductSpecs(product);
 }
 
 function renderProductGallery(product) {
-  const mainImg = document.getElementById('product-main-image');
-  const thumbsContainer = document.getElementById('product-thumbnails-container');
-  const images = product.images && product.images.length > 0 ? product.images : [product.primary_image];
+  const mainImg = document.getElementById('product-main-img') || document.getElementById('product-main-image');
+  const thumbsContainer = document.getElementById('product-thumbnails') || document.getElementById('product-thumbnails-container');
 
-  if (mainImg) mainImg.src = images[0];
+  const images = (product.images && product.images.length > 0) ? product.images : [product.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800'];
+
+  if (mainImg) {
+    mainImg.src = images[0];
+    mainImg.alt = product.name;
+  }
 
   if (thumbsContainer) {
-    thumbsContainer.innerHTML = images.map((imgUrl, idx) => `
-      <button type="button" onclick="switchMainImage('${imgUrl}', this)" class="product-thumb-btn ${idx === 0 ? 'active' : ''}" style="width:70px; height:90px; border-radius:6px; overflow:hidden; border:2px solid ${idx === 0 ? '#121212' : 'transparent'}; cursor:pointer; background:#F3EFEA; padding:0;">
-        <img src="${imgUrl}" alt="Thumbnail ${idx}" style="width:100%; height:100%; object-fit:cover;">
-      </button>
-    `).join('');
+    if (images.length > 1) {
+      thumbsContainer.innerHTML = images.map((imgUrl, idx) => `
+        <button type="button" onclick="window.switchMainProductImage('${imgUrl}', this)" class="product-thumb-btn ${idx === 0 ? 'border-neutral-900' : 'border-transparent'}" style="width:64px; height:80px; border-radius:6px; overflow:hidden; border-width:2px; flex-shrink:0; cursor:pointer; background:#FAF8F5; padding:0;">
+          <img src="${imgUrl}" alt="Thumbnail ${idx}" style="width:100%; height:100%; object-fit:cover;">
+        </button>
+      `).join('');
+    } else {
+      thumbsContainer.innerHTML = '';
+    }
   }
 }
 
-window.switchMainImage = (url, btn) => {
-  const mainImg = document.getElementById('product-main-image');
+window.switchMainProductImage = (url, btn) => {
+  const mainImg = document.getElementById('product-main-img') || document.getElementById('product-main-image');
   if (mainImg) mainImg.src = url;
-  document.querySelectorAll('.product-thumb-btn').forEach(b => b.style.borderColor = 'transparent');
-  if (btn) btn.style.borderColor = '#121212';
+  document.querySelectorAll('.product-thumb-btn').forEach(b => {
+    b.classList.remove('border-neutral-900');
+    b.classList.add('border-transparent');
+  });
+  if (btn) {
+    btn.classList.remove('border-transparent');
+    btn.classList.add('border-neutral-900');
+  }
 };
 
 function renderSizeSelector(product) {
-  const container = document.getElementById('product-sizes-selector');
-  if (!container || !product.sizes) return;
+  const container = document.getElementById('product-sizes-list') || document.getElementById('product-sizes-selector');
+  if (!container) return;
 
-  container.innerHTML = product.sizes.map(s => `
-    <button type="button" class="size-badge ${selectedSize === s ? 'active' : ''}" onclick="selectProductSize('${s}', this)">
+  const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['XS', 'S', 'M', 'L'];
+  container.innerHTML = sizes.map(s => `
+    <button type="button" onclick="window.selectProductSize('${s}', this)" 
+      class="size-choice-btn px-4 py-2 text-xs font-semibold rounded-md border transition ${selectedSize === s ? 'bg-neutral-900 text-white border-neutral-900' : 'bg-white text-neutral-800 border-[#E7E2DA] hover:border-neutral-900'}">
       ${s}
     </button>
   `).join('');
@@ -149,73 +169,76 @@ function renderSizeSelector(product) {
 
 window.selectProductSize = (size, btn) => {
   selectedSize = size;
-  document.querySelectorAll('#product-sizes-selector .size-badge').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  updateStockDisplay(currentProduct);
+  document.querySelectorAll('.size-choice-btn').forEach(b => {
+    b.className = 'size-choice-btn px-4 py-2 text-xs font-semibold rounded-md border transition bg-white text-neutral-800 border-[#E7E2DA] hover:border-neutral-900';
+  });
+  if (btn) {
+    btn.className = 'size-choice-btn px-4 py-2 text-xs font-semibold rounded-md border transition bg-neutral-900 text-white border-neutral-900';
+  }
 };
 
 function renderColorSelector(product) {
-  const container = document.getElementById('product-colors-selector');
-  const colorNameLabel = document.getElementById('product-selected-color-name');
+  const container = document.getElementById('product-colors-list') || document.getElementById('product-colors-selector');
+  const labelEl = document.getElementById('selected-color-name') || document.getElementById('product-selected-color-name');
 
-  if (!container || !product.colors) return;
-  if (colorNameLabel && selectedColor) colorNameLabel.textContent = selectedColor;
+  if (!container) return;
+  const colors = product.colors && product.colors.length > 0 ? product.colors : [{ name: 'Базовий', code: '#121212' }];
 
-  container.innerHTML = product.colors.map(c => `
-    <button type="button" class="color-dot ${selectedColor === c.name ? 'active' : ''}" style="background:${c.code}; width:24px; height:24px;" title="${c.name}" onclick="selectProductColor('${c.name}', this)">
+  if (labelEl && selectedColor) labelEl.textContent = selectedColor;
+
+  container.innerHTML = colors.map(c => `
+    <button type="button" onclick="window.selectProductColor('${c.name}', this)" 
+      class="color-choice-btn w-7 h-7 rounded-full border-2 transition ${selectedColor === c.name ? 'border-neutral-900 scale-110' : 'border-transparent hover:scale-105'}" 
+      style="background:${c.code}; padding:0;" title="${c.name}">
     </button>
   `).join('');
 }
 
 window.selectProductColor = (colorName, btn) => {
   selectedColor = colorName;
-  document.querySelectorAll('#product-colors-selector .color-dot').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const colorNameLabel = document.getElementById('product-selected-color-name');
-  if (colorNameLabel) colorNameLabel.textContent = colorName;
-  updateStockDisplay(currentProduct);
+  document.querySelectorAll('.color-choice-btn').forEach(b => {
+    b.classList.remove('border-neutral-900', 'scale-110');
+    b.classList.add('border-transparent');
+  });
+  if (btn) {
+    btn.classList.remove('border-transparent');
+    btn.classList.add('border-neutral-900', 'scale-110');
+  }
+  const labelEl = document.getElementById('selected-color-name') || document.getElementById('product-selected-color-name');
+  if (labelEl) labelEl.textContent = colorName;
 };
 
-function updateStockDisplay(product) {
-  const stockEl = document.getElementById('product-stock-status');
-  if (!stockEl || !product) return;
+function renderProductSpecs(product) {
+  const specsList = document.getElementById('product-details-list') || document.getElementById('product-specs-list');
+  if (!specsList) return;
 
-  let stock = 10;
-  if (product.variants) {
-    const v = product.variants.find(item => 
-      (!selectedSize || item.size === selectedSize) && 
-      (!selectedColor || item.color === selectedColor)
-    );
-    if (v) stock = v.stock;
-  }
-
-  if (stock > 5) {
-    stockEl.innerHTML = `<span style="color:#15803D; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#15803D; border-radius:50%;"></span> В наявності (${stock} шт.)</span>`;
-  } else if (stock > 0) {
-    stockEl.innerHTML = `<span style="color:#D97706; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#D97706; border-radius:50%;"></span> Залишилося мало (усього ${stock} шт.)</span>`;
+  if (product.details) {
+    const isRu = window.I18N?.currentLang === 'ru';
+    specsList.innerHTML = Object.entries(product.details).map(([k, v]) => {
+      let label = k;
+      if (k === 'composition') label = isRu ? 'Состав' : 'Склад';
+      else if (k === 'fit') label = isRu ? 'Посадка и крой' : 'Посадка та крій';
+      else if (k === 'season') label = isRu ? 'Сезон' : 'Сезон';
+      else if (k === 'care') label = isRu ? 'Уход' : 'Догляд';
+      return `<li><strong>${label}:</strong> ${v}</li>`;
+    }).join('');
   } else {
-    stockEl.innerHTML = `<span style="color:#B91C1C; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#B91C1C; border-radius:50%;"></span> Немає в наявності</span>`;
+    specsList.innerHTML = '<li>100% преміальна натуральна тканина</li><li>Вироблено в Україні</li>';
   }
 }
 
-window.changeProductQty = (delta) => {
-  selectedQuantity = Math.max(1, selectedQuantity + delta);
-  const qtyEl = document.getElementById('product-qty-input');
-  if (qtyEl) qtyEl.textContent = selectedQuantity;
-};
-
-window.handleAddToCart = async () => {
+window.addProductToCart = async () => {
   if (!currentProduct) return;
   if (!selectedSize && currentProduct.sizes && currentProduct.sizes.length > 0) {
-    window.Toast.warning('Будь ласка, оберіть розмір');
+    window.Toast?.warning(window.I18N?.currentLang === 'ru' ? 'Пожалуйста, выберите размер' : 'Будь ласка, оберіть розмір');
     return;
   }
 
-  const btn = document.getElementById('add-to-cart-btn');
+  const btn = document.getElementById('btn-add-to-cart') || document.getElementById('add-to-cart-btn');
   try {
     if (btn) {
       btn.disabled = true;
-      btn.textContent = 'Додавання...';
+      btn.textContent = window.I18N?.currentLang === 'ru' ? 'Добавление...' : 'Додавання...';
     }
 
     const updatedCart = await window.API.addToCart(
@@ -227,63 +250,72 @@ window.handleAddToCart = async () => {
 
     window.Store.cart = updatedCart;
     window.Store.emit('cart:updated', updatedCart);
-    window.Toast.success(`«${currentProduct.name}» додано в кошик`);
+    window.Toast?.success(window.I18N?.currentLang === 'ru' ? `«${currentProduct.name}» добавлен в корзину` : `«${currentProduct.name}» додано в кошик`);
     window.Modal?.open('cart-drawer');
   } catch (err) {
-    window.Toast.error(err.message || 'Не вдалося додати в кошик');
+    window.Toast?.error(err.message || 'Не вдалося додати в кошик');
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = 'Додати в кошик';
+      btn.textContent = window.I18N ? window.I18N.t('product_add_cart') : 'Додати в кошик';
     }
   }
 };
 
-window.openOneClickModal = () => {
-  if (!selectedSize && currentProduct?.sizes?.length > 0) {
-    window.Toast.warning('Будь ласка, оберіть розмір');
-    return;
-  }
-  const modalProdName = document.getElementById('one-click-prod-name');
-  const modalProdSize = document.getElementById('one-click-prod-size');
-  const modalProdPrice = document.getElementById('one-click-prod-price');
-
-  if (modalProdName) modalProdName.textContent = currentProduct.name;
-  if (modalProdSize) modalProdSize.textContent = `Размер: ${selectedSize || 'Standard'}${selectedColor ? ` | Цвет: ${selectedColor}` : ''}`;
-  if (modalProdPrice) modalProdPrice.textContent = window.Store.formatPrice(currentProduct.price);
-
-  window.Modal?.open('one-click-modal');
+window.toggleProductFav = async () => {
+  if (!currentProduct) return;
+  const isFav = await window.Store.toggleFavorite(currentProduct.id);
+  updateFavoriteButtonState(currentProduct.id);
+  window.Toast?.success(isFav ? 
+    (window.I18N?.currentLang === 'ru' ? 'Товар добавлен в избранное' : 'Товар додано до обраного') : 
+    (window.I18N?.currentLang === 'ru' ? 'Товар удален из избранного' : 'Товар видалено з обраного')
+  );
 };
 
-window.submitOneClickOrder = async (e) => {
-  e.preventDefault();
-  const phone = document.getElementById('one-click-phone').value;
-  const name = document.getElementById('one-click-name').value;
+function updateFavoriteButtonState(productId) {
+  const btn = document.getElementById('btn-toggle-fav') || document.getElementById('product-fav-btn');
+  if (!btn) return;
+  const isFav = window.Store.isFavorite(productId);
+  const svg = btn.querySelector('svg');
+  if (svg) {
+    svg.setAttribute('fill', isFav ? '#E11D48' : 'none');
+    svg.setAttribute('stroke', isFav ? '#E11D48' : '#121212');
+  }
+}
+
+async function loadSimilarProducts(product) {
+  const container = document.getElementById('product-similar-grid') || document.getElementById('product-related-grid');
+  if (!container) return;
 
   try {
-    const orderData = {
-      first_name: name,
-      last_name: 'Покупець',
-      phone: phone,
-      email: 'oneclick@female-fabric.ua',
-      city: 'Київ',
-      address: 'Уточнити при дзвінку менеджера (Швидке замовлення в 1 клік)',
-      delivery_method: 'Нова Пошта (Кур'єр)',
-      payment_method: 'Післяплата',
-      notes: `Швидке замовлення товару: ${currentProduct.name} (${selectedSize}, ${selectedColor})`,
-      items: [{
-        product_id: currentProduct.id,
-        size: selectedSize,
-        color: selectedColor,
-        quantity: selectedQuantity,
-        price: currentProduct.price
-      }]
-    };
+    const res = await window.API.getProducts({ category_slug: product.category_slug, limit: 4 });
+    const items = res.items.filter(p => p.id !== product.id).slice(0, 4);
 
-    const res = await window.API.createOrder(orderData);
-    window.Modal?.close('one-click-modal');
-    window.location.href = `/order-success?order_number=${res.order_number}`;
-  } catch (err) {
-    window.Toast.error(err.message || 'Помилка оформлення замовлення');
+    if (items.length === 0) {
+      container.parentElement?.classList.add('hidden');
+      return;
+    }
+
+    container.innerHTML = items.map(p => `
+      <div class="product-card" style="background:#FFF; border-radius:12px; overflow:hidden; border:1px solid #E7E2DA; display:flex; flex-direction:column;">
+        <a href="/product/${p.slug}" style="display:block; height:240px; position:relative; overflow:hidden; background:#FAF8F5;">
+          <img src="${p.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500'}" alt="${p.name}" class="img-zoom" style="width:100%; height:100%; object-fit:cover;">
+        </a>
+        <div style="padding:14px; display:flex; flex-direction:column; flex:1; justify-content:space-between;">
+          <a href="/product/${p.slug}" style="font-size:0.875rem; font-weight:500; color:#121212; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</a>
+          <div style="font-weight:700; font-size:0.938rem;">${window.Store.formatPrice(p.price)}</div>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    console.warn('Error loading similar products:', e);
   }
+}
+
+window.openSizeGuide = () => {
+  const isRu = window.I18N?.currentLang === 'ru';
+  alert(isRu ? 
+    "Таблица размеров:\nXS: ОГ 82-86, ОТ 62-66, ОБ 88-92\nS: ОГ 86-90, ОТ 66-70, ОБ 92-96\nM: ОГ 90-94, ОТ 70-74, ОБ 96-100\nL: ОГ 94-98, ОТ 74-78, ОБ 100-104" : 
+    "Таблиця розмірів:\nXS: ОГ 82-86, ОТ 62-66, ОБ 88-92\nS: ОГ 86-90, ОТ 66-70, ОБ 92-96\nM: ОГ 90-94, ОТ 70-74, ОБ 96-100\nL: ОГ 94-98, ОТ 74-78, ОБ 100-104"
+  );
 };

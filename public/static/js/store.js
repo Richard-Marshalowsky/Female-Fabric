@@ -1,4 +1,4 @@
-﻿// Global Reactive State Store for Female-Fabric
+// Global Reactive State Store for Female-Fabric
 class Store {
   constructor() {
     this.user = null;
@@ -11,6 +11,7 @@ class Store {
       total: 0
     };
     this.favorites = new Set();
+    this.favoriteProductsCache = [];
     this.listeners = {};
   }
 
@@ -32,7 +33,6 @@ class Store {
       try {
         const userData = await window.API.getMe();
         this.setUser(userData);
-        await this.loadFavorites();
       } catch (e) {
         console.warn('Could not restore user session:', e);
         this.setUser(null);
@@ -41,7 +41,10 @@ class Store {
       this.setUser(null);
     }
 
-    // 2. Fetch initial cart
+    // 2. Load favorites (guest or user)
+    await this.loadFavorites();
+
+    // 3. Fetch initial cart
     await this.refreshCart();
   }
 
@@ -61,44 +64,85 @@ class Store {
   }
 
   async loadFavorites() {
-    if (!this.user) {
-      this.favorites.clear();
-      this.emit('fav:updated', this.favorites);
-      return;
+    if (this.user) {
+      try {
+        const favList = await window.API.getFavorites();
+        this.favoriteProductsCache = favList;
+        this.favorites = new Set(favList.map(p => p.id));
+      } catch (e) {
+        console.warn('Failed to load user favorites:', e);
+      }
+    } else {
+      try {
+        const saved = localStorage.getItem('female_fabric_fav_ids');
+        const ids = saved ? JSON.parse(saved) : [];
+        this.favorites = new Set(ids);
+      } catch (e) {
+        this.favorites = new Set();
+      }
     }
-    try {
-      const favList = await window.API.getFavorites();
-      this.favorites = new Set(favList.map(p => p.id));
-      this.emit('fav:updated', this.favorites);
-    } catch (e) {
-      console.warn('Failed to load favorites:', e);
-    }
+    this.emit('fav:updated', Array.from(this.favorites));
   }
 
   isFavorite(productId) {
-    return this.favorites.has(productId);
+    return this.favorites.has(Number(productId));
   }
 
-  async toggleFavorite(productId) {
-    if (!this.user) {
-      window.Toast.info('Войдите или зарегистрируйтесь, чтобы сохранять товары в избранное');
-      window.Modal?.open('auth-modal');
-      return false;
-    }
-    try {
-      const res = await window.API.toggleFavorite(productId);
-      if (res.is_favorite) {
-        this.favorites.add(productId);
-        window.Toast.success('Добавлено в избранное');
-      } else {
-        this.favorites.delete(productId);
-        window.Toast.info('Удалено из избранного');
+  async toggleFavorite(productId, productObj = null) {
+    const id = Number(productId);
+    let isNowFav = false;
+
+    if (this.user) {
+      try {
+        const res = await window.API.toggleFavorite(id);
+        isNowFav = res.is_favorite;
+        if (isNowFav) {
+          this.favorites.add(id);
+          if (productObj) this.favoriteProductsCache.push(productObj);
+        } else {
+          this.favorites.delete(id);
+          this.favoriteProductsCache = this.favoriteProductsCache.filter(p => p.id !== id);
+        }
+      } catch (err) {
+        console.error('Toggle favorite API error:', err);
       }
-      this.emit('fav:updated', this.favorites);
-      return res.is_favorite;
-    } catch (err) {
-      window.Toast.error(err.message || 'Не удалось обновить избранное');
-      return false;
+    } else {
+      // Guest localStorage support
+      if (this.favorites.has(id)) {
+        this.favorites.delete(id);
+        isNowFav = false;
+        this.favoriteProductsCache = this.favoriteProductsCache.filter(p => p.id !== id);
+      } else {
+        this.favorites.add(id);
+        isNowFav = true;
+        if (productObj) this.favoriteProductsCache.push(productObj);
+      }
+      localStorage.setItem('female_fabric_fav_ids', JSON.stringify(Array.from(this.favorites)));
+    }
+
+    this.emit('fav:updated', Array.from(this.favorites));
+    return isNowFav;
+  }
+
+  async getFavoriteProducts() {
+    if (this.user) {
+      try {
+        const favList = await window.API.getFavorites();
+        this.favoriteProductsCache = favList;
+        return favList;
+      } catch (e) {
+        return this.favoriteProductsCache;
+      }
+    } else {
+      const ids = Array.from(this.favorites);
+      if (ids.length === 0) return [];
+      try {
+        // Fetch products list and filter
+        const res = await window.API.getProducts({ limit: 50 });
+        return res.items.filter(p => this.favorites.has(p.id));
+      } catch (e) {
+        return this.favoriteProductsCache;
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-﻿// Global App Logic: Header, Search, Cart Drawer, Navigation
+// Global App Logic: Header, Search, Cart Drawer, Wishlist Drawer, Navigation
 document.addEventListener('DOMContentLoaded', async () => {
   // Initialize Global Store
   await window.Store.init();
@@ -25,14 +25,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderCartDrawer(cart);
   });
 
+  // Update Wishlist Badges
+  window.Store.on('fav:updated', (favIds) => {
+    const count = favIds.length;
+    const badges = document.querySelectorAll('.wishlist-badge-count');
+    badges.forEach(b => {
+      b.textContent = count;
+      b.style.display = count > 0 ? 'inline-flex' : 'none';
+    });
+    renderWishlistDrawer();
+  });
+
   // Update Auth Header Controls
   window.Store.on('auth:changed', (user) => {
     updateAuthHeaderUI(user);
   });
 
-  // Render initial Cart Drawer & Auth UI
+  // Render initial States
   renderCartDrawer(window.Store.cart);
   updateAuthHeaderUI(window.Store.user);
+  
+  // Trigger initial badges
+  const initFavCount = window.Store.favorites.size;
+  document.querySelectorAll('.wishlist-badge-count').forEach(b => {
+    b.textContent = initFavCount;
+    b.style.display = initFavCount > 0 ? 'inline-flex' : 'none';
+  });
 
   // Setup Global Live Search with Autocomplete
   setupLiveSearch();
@@ -88,13 +106,12 @@ function renderCartDrawer(cart) {
     subtotalEl.textContent = window.Store.formatPrice(cart.total);
   }
 
-  // Free shipping progress bar
   if (freeShipBar) {
     const percent = Math.min(100, Math.round((cart.subtotal / cart.free_delivery_threshold) * 100));
     if (cart.amount_left_for_free_delivery > 0) {
       freeShipBar.innerHTML = `
         <div style="font-size:0.813rem; margin-bottom:4px; display:flex; justify-content:space-between;">
-          <span>До безкоштовної доставки:</span>
+          <span>${window.I18N?.currentLang === 'ru' ? 'До бесплатной доставки:' : 'До безкоштовної доставки:'}</span>
           <strong>${window.Store.formatPrice(cart.amount_left_for_free_delivery)}</strong>
         </div>
         <div style="height:4px; background:#E5E0D8; border-radius:2px; overflow:hidden;">
@@ -104,7 +121,7 @@ function renderCartDrawer(cart) {
     } else {
       freeShipBar.innerHTML = `
         <div style="font-size:0.813rem; color:#15803D; font-weight:500; display:flex; align-items:center; gap:4px;">
-          ✓ Безкоштовна доставка включена!
+          ${window.I18N?.currentLang === 'ru' ? '✓ Бесплатная доставка включена!' : '✓ Безкоштовна доставка включена!'}
         </div>
       `;
     }
@@ -152,13 +169,60 @@ window.removeCartItem = async (itemId) => {
     const updated = await window.API.removeFromCart(itemId);
     window.Store.cart = updated;
     window.Store.emit('cart:updated', updated);
-    window.Toast.info('Товар видалено з кошика');
+    window.Toast.info(window.I18N?.currentLang === 'ru' ? 'Товар удален из корзины' : 'Товар видалено з кошика');
   } catch (err) {
-    window.Toast.error(err.message || 'Помилка видалення');
+    window.Toast.error(err.message || 'Помилка видалення товару');
   }
 };
 
-// Live Search with Autocomplete
+// Wishlist Drawer Rendering & Actions
+window.openWishlistDrawer = async () => {
+  await renderWishlistDrawer();
+  window.Modal?.open('wishlist-drawer');
+};
+
+async function renderWishlistDrawer() {
+  const container = document.getElementById('wishlist-drawer-items');
+  const emptyState = document.getElementById('wishlist-drawer-empty');
+  if (!container) return;
+
+  const products = await window.Store.getFavoriteProducts();
+
+  if (!products || products.length === 0) {
+    container.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+
+  container.innerHTML = products.map(p => `
+    <div style="display:flex; gap:12px; padding:12px 0; border-bottom:1px solid #F0EDE8; align-items:center;">
+      <a href="/product/${p.slug}">
+        <img src="${p.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200'}" alt="${p.name}" style="width:60px; height:75px; object-fit:cover; border-radius:6px;">
+      </a>
+      <div style="flex:1;">
+        <a href="/product/${p.slug}" style="font-weight:500; font-size:0.875rem; color:#121212; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</a>
+        <div style="font-weight:700; font-size:0.875rem; margin:4px 0;">${window.Store.formatPrice(p.price)}</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <a href="/product/${p.slug}" class="btn btn-primary btn-sm" style="font-size:0.75rem; padding:4px 10px;">
+            ${window.I18N?.currentLang === 'ru' ? 'В корзину' : 'В кошик'}
+          </a>
+          <button onclick="window.removeWishlistItem(${p.id})" style="background:none; border:none; color:#DC2626; font-size:0.75rem; cursor:pointer; text-decoration:underline;">
+            ${window.I18N?.currentLang === 'ru' ? 'Удалить' : 'Видалити'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.removeWishlistItem = async (productId) => {
+  await window.Store.toggleFavorite(productId);
+  await renderWishlistDrawer();
+};
+
+// Global Live Search Setup
 function setupLiveSearch() {
   const searchInputs = document.querySelectorAll('.site-search-input');
   const dropdown = document.getElementById('search-autocomplete-dropdown');
@@ -169,21 +233,23 @@ function setupLiveSearch() {
       clearTimeout(debounceTimeout);
       const query = e.target.value.trim();
 
+      if (!dropdown) return;
+
       if (query.length < 2) {
-        if (dropdown) dropdown.classList.add('hidden');
+        dropdown.classList.add('hidden');
         return;
       }
 
       debounceTimeout = setTimeout(async () => {
         try {
           const res = await window.API.getProducts({ q: query, limit: 5 });
-          if (!dropdown) return;
+          dropdown.classList.remove('hidden');
 
           if (res.items.length === 0) {
             dropdown.innerHTML = '<div style="padding:16px; text-align:center; color:#78716C; font-size:0.875rem;">Нічого не знайдено</div>';
           } else {
             dropdown.innerHTML = `
-              <div style="padding:8px 12px; font-size:0.75rem; text-transform:uppercase; color:#A8A29E; font-weight:600;">Найдено товаров (${res.total})</div>
+              <div style="padding:8px 12px; font-size:0.75rem; text-transform:uppercase; color:#A8A29E; font-weight:600;">Знайдено товарів (${res.total})</div>
               ${res.items.map(p => `
                 <a href="/product/${p.slug}" style="display:flex; gap:12px; align-items:center; padding:8px 12px; border-bottom:1px solid #F7F5F0; transition:background 0.2s;" onmouseover="this.style.background='#F7F5F0'" onmouseout="this.style.background='transparent'">
                   <img src="${p.primary_image}" alt="${p.name}" style="width:40px; height:50px; object-fit:cover; border-radius:4px;">
@@ -195,15 +261,14 @@ function setupLiveSearch() {
                 </a>
               `).join('')}
               <a href="/catalog?q=${encodeURIComponent(query)}" style="display:block; text-align:center; padding:10px; font-size:0.813rem; font-weight:600; color:#121212; background:#F0EDE8;">
-                Показать все результаты (${res.total}) →
+                Показати всі результати →
               </a>
             `;
           }
-          dropdown.classList.remove('hidden');
-        } catch (e) {
-          console.error(e);
+        } catch (err) {
+          console.error(err);
         }
-      }, 250);
+      }, 300);
     });
 
     input.addEventListener('keydown', (e) => {
@@ -216,15 +281,14 @@ function setupLiveSearch() {
     });
   });
 
-  // Close dropdown on click outside
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-container') && dropdown) {
+    if (dropdown && !e.target.closest('.search-container')) {
       dropdown.classList.add('hidden');
     }
   });
 }
 
-// Auth modal tabs & form handlers
+// Auth Modal Logic
 function setupAuthModal() {
   const loginTabBtn = document.getElementById('auth-tab-login');
   const registerTabBtn = document.getElementById('auth-tab-register');
@@ -233,21 +297,24 @@ function setupAuthModal() {
 
   if (loginTabBtn && registerTabBtn) {
     loginTabBtn.addEventListener('click', () => {
-      loginTabBtn.classList.add('active');
-      registerTabBtn.classList.remove('active');
-      loginForm.classList.remove('hidden');
-      registerForm.classList.add('hidden');
+      loginTabBtn.classList.add('border-neutral-900', 'text-neutral-900');
+      loginTabBtn.classList.remove('border-transparent', 'text-neutral-400');
+      registerTabBtn.classList.remove('border-neutral-900', 'text-neutral-900');
+      registerTabBtn.classList.add('border-transparent', 'text-neutral-400');
+      if (loginForm) loginForm.classList.remove('hidden');
+      if (registerForm) registerForm.classList.add('hidden');
     });
 
     registerTabBtn.addEventListener('click', () => {
-      registerTabBtn.classList.add('active');
-      loginTabBtn.classList.remove('active');
-      registerForm.classList.remove('hidden');
-      loginForm.classList.add('hidden');
+      registerTabBtn.classList.add('border-neutral-900', 'text-neutral-900');
+      registerTabBtn.classList.remove('border-transparent', 'text-neutral-400');
+      loginTabBtn.classList.remove('border-neutral-900', 'text-neutral-900');
+      loginTabBtn.classList.add('border-transparent', 'text-neutral-400');
+      if (registerForm) registerForm.classList.remove('hidden');
+      if (loginForm) loginForm.classList.add('hidden');
     });
   }
 
-  // Handle Login Submit
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -257,26 +324,25 @@ function setupAuthModal() {
 
       try {
         btn.disabled = true;
-        btn.textContent = 'Вход...';
+        btn.textContent = 'Вхід...';
         const res = await window.API.login({ email, password });
         window.Store.setUser(res.user);
-        await window.Store.refreshCart();
         await window.Store.loadFavorites();
-        window.Toast.success(`Добро пожаловать, ${res.user.full_name}!`);
+        await window.Store.refreshCart();
+        window.Toast.success(`Вітаємо, ${res.user.full_name}!`);
         window.Modal?.close('auth-modal');
         if (window.location.pathname === '/login') {
           window.location.href = res.user.role === 'admin' ? '/admin' : '/profile';
         }
       } catch (err) {
-        window.Toast.error(err.message || 'Ошибка входа');
+        window.Toast.error(err.message || 'Помилка входу');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Войти в аккаунт';
+        btn.textContent = 'Увійти в акаунт';
       }
     });
   }
 
-  // Handle Register Submit
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -288,35 +354,46 @@ function setupAuthModal() {
 
       try {
         btn.disabled = true;
-        btn.textContent = 'Регистрация...';
+        btn.textContent = 'Реєстрація...';
         const res = await window.API.register({ full_name, email, phone, password });
         window.Store.setUser(res.user);
-        await window.Store.refreshCart();
-        window.Toast.success('Регистрация прошла успешно!');
+        window.Toast.success('Реєстрація успішна!');
         window.Modal?.close('auth-modal');
         if (window.location.pathname === '/login') {
           window.location.href = '/profile';
         }
       } catch (err) {
-        window.Toast.error(err.message || 'Ошибка регистрации');
+        window.Toast.error(err.message || 'Помилка реєстрації');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Зарегистрироваться';
+        btn.textContent = 'Зареєструватися';
       }
     });
   }
 }
 
+// Demo Login Helpers
+window.fillDemoLogin = (role) => {
+  const emailInput = document.getElementById('login-email');
+  const passInput = document.getElementById('login-password');
+  if (role === 'admin') {
+    if (emailInput) emailInput.value = 'admin@female-fabric.ua';
+    if (passInput) passInput.value = 'Admin123!';
+  } else {
+    if (emailInput) emailInput.value = 'user@female-fabric.ua';
+    if (passInput) passInput.value = 'User123!';
+  }
+};
+
 window.handleGlobalLogout = async () => {
   try {
     await window.API.logout();
     window.Store.setUser(null);
-    await window.Store.refreshCart();
-    window.Toast.info('Вы вышли из системы');
-    if (window.location.pathname.startsWith('/admin') || window.location.pathname.startsWith('/profile')) {
+    window.Toast.info('Ви вийшли з акаунту');
+    if (window.location.pathname.startsWith('/profile') || window.location.pathname.startsWith('/admin')) {
       window.location.href = '/';
     }
-  } catch (err) {
-    window.Toast.error(err.message || 'Ошибка выхода');
+  } catch (e) {
+    console.error(e);
   }
 };
