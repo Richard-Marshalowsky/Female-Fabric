@@ -10,3 +10,6 @@ from app.main import app, ensure_db_initialized
 
 # Ensure tables & seed data are created on cold start
 ensure_db_initialized()
+
+# Export both app and handler for maximum Vercel compatibility
+handler = app
