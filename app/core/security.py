@@ -2,26 +2,34 @@ import secrets
 import hashlib
 import hmac
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, Any
+
+try:
+    import bcrypt
+    HAS_BCRYPT = True
+except ImportError:
+    HAS_BCRYPT = False
 
 import jwt
 from app.config import settings
 
-# Use PBKDF2 for password hashing (compatible with Cloudflare Workers / Pyodide)
 def hash_password(password: str) -> str:
-    """Hash password using PBKDF2-HMAC-SHA256 with random salt."""
+    if HAS_BCRYPT:
+        salt = bcrypt.gensalt()
+        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
     salt = secrets.token_hex(16)
     key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
     return f"pbkdf2_sha256${salt}${key.hex()}"
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify password against PBKDF2 hash."""
     try:
-        if not hashed_password.startswith("pbkdf2_sha256$"):
-            return False
-        _, salt, key_hex = hashed_password.split("$")
-        key = hashlib.pbkdf2_hmac('sha256', plain_password.encode('utf-8'), salt.encode('utf-8'), 100000)
-        return hmac.compare_digest(key.hex(), key_hex)
+        if hashed_password.startswith("pbkdf2_sha256$"):
+            _, salt, key_hex = hashed_password.split("$")
+            key = hashlib.pbkdf2_hmac('sha256', plain_password.encode('utf-8'), salt.encode('utf-8'), 100000)
+            return hmac.compare_digest(key.hex(), key_hex)
+        if HAS_BCRYPT:
+            return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+        return False
     except Exception:
         return False
 
