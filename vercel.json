@@ -1,9 +1,61 @@
 {
   "version": 2,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index.py"
+      "src": "/static/(.*)",
+      "dest": "/public/static/$1"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/product/(.*)",
+      "dest": "/public/product.html"
+    },
+    {
+      "src": "/catalog",
+      "dest": "/public/catalog.html"
+    },
+    {
+      "src": "/cart",
+      "dest": "/public/cart.html"
+    },
+    {
+      "src": "/checkout",
+      "dest": "/public/checkout.html"
+    },
+    {
+      "src": "/order-success",
+      "dest": "/public/order-success.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/public/profile.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/public/login.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/public/admin.html"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/public/robots.txt"
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "/public/sitemap.xml"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.py"
     }
   ]
 }

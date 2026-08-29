@@ -44,11 +44,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files directly in FastAPI
-if settings.STATIC_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(settings.STATIC_DIR)), name="static")
-elif settings.PUBLIC_DIR.exists() and (settings.PUBLIC_DIR / "static").exists():
-    app.mount("/static", StaticFiles(directory=str(settings.PUBLIC_DIR / "static")), name="static")
+# Optional Static files mount for local dev
+try:
+    if settings.STATIC_DIR.exists():
+        app.mount("/static", StaticFiles(directory=str(settings.STATIC_DIR)), name="static")
+    elif settings.PUBLIC_DIR.exists() and (settings.PUBLIC_DIR / "static").exists():
+        app.mount("/static", StaticFiles(directory=str(settings.PUBLIC_DIR / "static")), name="static")
+except Exception:
+    pass
 
 def get_template_html(filename: str) -> str:
     template_path = settings.TEMPLATES_DIR / filename
@@ -74,7 +77,7 @@ app.include_router(admin_orders_router)
 app.include_router(admin_users_router)
 app.include_router(admin_uploads_router)
 
-# Auto-initialize database tables and seed data for serverless environments (Vercel)
+# Auto-initialize database tables and seed data
 def ensure_db_initialized():
     if settings.AUTO_CREATE_TABLES:
         try:
@@ -95,13 +98,6 @@ ensure_db_initialized()
 @app.on_event("startup")
 def startup_event():
     ensure_db_initialized()
-
-@app.middleware("http")
-async def ensure_db_middleware(request: Request, call_next):
-    # Quick fallback in case cold start skipped module-level init
-    if request.url.path.startswith("/api/"):
-        ensure_db_initialized()
-    return await call_next(request)
 
 # HTML Pages Routes
 @app.get("/", response_class=HTMLResponse)
