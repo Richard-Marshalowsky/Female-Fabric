@@ -1,97 +1,314 @@
-﻿<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Вход и регистрация — Female-Fabric</title>
+  <title>Вхід в акаунт — Female-Fabric</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body class="bg-[#FAF8F5] text-[#1C1917] flex flex-col min-h-screen">
 
+  <!-- Top Announcement Bar -->
+  <div class="bg-[#121212] text-[#FAF8F5] text-xs py-2 text-center tracking-wider">
+    <span data-i18n="announcement">Безкоштовна доставка з приміркою при замовленні від 2 500 ₴ | Знижка 10% на перше замовлення</span>
+  </div>
+
+  <!-- Header -->
   <header class="site-header sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur border-b border-[#E7E2DA]">
     <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Mobile Menu Button -->
+      <button class="md:hidden p-2 text-neutral-800" onclick="window.Modal.open('mobile-menu-drawer')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+
+      <!-- Logo -->
       <a href="/" class="flex flex-col items-center">
         <span class="font-serif text-2xl md:text-3xl font-semibold tracking-wider uppercase text-neutral-900">Female-Fabric</span>
+        <span class="text-[9px] uppercase tracking-[0.25em] text-neutral-500 -mt-1">Atelier & Boutique</span>
       </a>
-      <a href="/" class="text-xs font-semibold hover:underline">← На главную</a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <a href="/catalog" class="hover:text-neutral-500 transition" data-i18n="nav_catalog">Каталог</a>
+        <a href="/catalog?category=dresses" class="hover:text-neutral-500 transition" data-i18n="nav_dresses">Сукні</a>
+        <a href="/catalog?category=suits" class="hover:text-neutral-500 transition" data-i18n="nav_suits">Костюми</a>
+        <a href="/catalog?category=outerwear" class="hover:text-neutral-500 transition" data-i18n="nav_outerwear">Верхній одяг</a>
+        <a href="/catalog?on_sale=true" class="text-rose-600 hover:text-rose-700 font-semibold transition" data-i18n="nav_sale">Sale</a>
+      </nav>
+
+      <!-- Right Action Icons & Search -->
+      <div class="flex items-center space-x-4">
+        <!-- Live Search Container -->
+        <div class="search-container relative hidden sm:block w-48 lg:w-64">
+          <input type="text" data-i18n="search_placeholder" placeholder="Пошук одягу..." class="site-search-input w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#E7E2DA] rounded-full focus:outline-none focus:border-neutral-900">
+          <svg class="absolute left-3 top-2.5 text-neutral-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <div id="search-autocomplete-dropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-[#E7E2DA] overflow-hidden z-50"></div>
+        </div>
+
+        <!-- Account -->
+        <div class="auth-guest-view">
+          <button onclick="window.Modal.open('auth-modal')" class="p-2 text-neutral-800 hover:text-neutral-500 transition" title="Увійти в акаунт">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
+        </div>
+        <div class="auth-user-view hidden flex items-center space-x-2">
+          <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 flex items-center gap-1 text-xs font-medium" title="Особистий кабінет">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="user-name-slot hidden lg:inline" data-i18n="nav_cabinet">Кабінет</span>
+          </a>
+          <a href="/admin" class="admin-nav-link hidden text-xs bg-neutral-900 text-white px-2.5 py-1 rounded font-medium hover:bg-neutral-800" data-i18n="nav_admin">Адмінка</a>
+        </div>
+
+        <!-- Wishlist -->
+        <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Обране">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </a>
+
+        <!-- Cart Button (Opens Drawer) -->
+        <button onclick="window.Modal.open('cart-drawer')" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Кошик">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge-count absolute -top-1 -right-1 bg-neutral-900 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center hidden">0</span>
+        </button>
+
+      </div>
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-12 flex-1 flex items-center justify-center">
-    <div class="bg-white p-8 md:p-10 rounded-2xl border border-[#E7E2DA] max-w-md w-full shadow-sm">
+  <main class="flex-1 py-16 flex items-center justify-center">
+    <div class="container mx-auto px-4 max-w-md">
+      <div class="bg-white p-8 rounded-2xl border border-[#E7E2DA] shadow-sm">
+        <h1 class="font-serif text-2xl text-center mb-6" data-i18n="auth_login_title">Вхід в акаунт</h1>
+        
+        <form onsubmit="handleLoginPageSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
+            <input type="email" id="login-page-email" required class="form-input text-sm" placeholder="anna@example.com">
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-xs font-medium text-neutral-700" data-i18n="auth_password">Пароль</label>
+              <button type="button" onclick="window.promptForgotPassword()" class="text-xs text-neutral-500 hover:underline" data-i18n="auth_forgot">Забули пароль?</button>
+            </div>
+            <input type="password" id="login-page-password" required class="form-input text-sm" placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary w-full py-3 text-sm font-medium" data-i18n="auth_btn_login">Увійти в акаунт</button>
+        </form>
+
+        <div class="mt-6 text-center text-xs text-neutral-500">
+          <span data-i18n="auth_no_account">Немає акаунту?</span>
+          <button onclick="window.Modal.open('auth-modal'); document.getElementById('auth-tab-register').click();" class="text-neutral-900 font-semibold hover:underline ml-1" data-i18n="auth_btn_reg">Зареєструватися</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#161616] text-[#FAF8F5] pt-16 pb-12 mt-auto">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-neutral-800">
+        
+        <div>
+          <div class="font-serif text-2xl tracking-wider uppercase mb-4">Female-Fabric</div>
+          <p class="text-xs text-neutral-400 leading-relaxed mb-6" data-i18n="footer_about">
+            Інтернет-магазин жіночого одягу. Лаконічність, якість та естетика на кожний день.
+          </p>
+          <div class="text-xs text-neutral-400">
+            <div data-i18n="footer_phone">Тел: +38 (097) 123-45-67</div>
+            <div data-i18n="footer_email">Email: support@female-fabric.ua</div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider" data-i18n="footer_catalog">Каталог</h4>
+          <ul class="space-y-2 text-xs text-neutral-400">
+            <li><a href="/catalog?category=dresses" class="hover:text-white transition" data-i18n="nav_dresses">Сукні</a></li>
+            <li><a href="/catalog?category=blouses" class="hover:text-white transition" data-i18n="nav_blouses">Блузи та сорочки</a></li>
+            <li><a href="/catalog?category=suits" class="hover:text-white transition" data-i18n="nav_suits">Костюми та жакети</a></li>
+            <li><a href="/catalog?category=outerwear" class="hover:text-white transition" data-i18n="nav_outerwear">Верхній одяг</a></li>
+            <li><a href="/catalog?category=knitwear" class="hover:text-white transition" data-i18n="nav_knitwear">Трикотаж</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider" data-i18n="footer_customers">Покупцям</h4>
+          <ul class="space-y-2 text-xs text-neutral-400">
+            <li><a href="/profile" class="hover:text-white transition" data-i18n="profile_title">Особистий кабінет</a></li>
+            <li><a href="/cart" class="hover:text-white transition" data-i18n="nav_cart">Кошик</a></li>
+            <li><a href="/checkout" class="hover:text-white transition" data-i18n="checkout_title">Оформлення замовлення</a></li>
+            <li><a href="/catalog?on_sale=true" class="hover:text-white transition" data-i18n="nav_sale">Розпродаж (Sale)</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider" data-i18n="footer_newsletter">Розсилка</h4>
+          <p class="text-xs text-neutral-400 mb-4" data-i18n="footer_newsletter_desc">Отримуйте першими сповіщення про закриті розпродажі та нові колекції.</p>
+          <form onsubmit="event.preventDefault(); window.Toast.success('Дякуємо за підписку!');" class="flex gap-2">
+            <input type="email" placeholder="Ваш email" required class="bg-neutral-800 text-white text-xs px-3 py-2 rounded focus:outline-none flex-1 border border-neutral-700">
+            <button type="submit" class="bg-[#C5A880] text-neutral-900 text-xs px-4 py-2 rounded font-semibold hover:bg-[#B3956D]" data-i18n="footer_newsletter_btn">OK</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-neutral-500 gap-4">
+        <div data-i18n="footer_rights">© 2026 Female-Fabric. Всі права захищені.</div>
+        <div class="flex space-x-6">
+          <span data-i18n="footer_payment_methods">Оплата карткою онлайн, Apple Pay, Google Pay</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <div class="mobile-nav-bar">
+    <a href="/" class="flex flex-col items-center text-[10px] text-neutral-900">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span data-i18n="nav_home">Головна</span>
+    </a>
+    <a href="/catalog" class="flex flex-col items-center text-[10px] text-neutral-600">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+      <span data-i18n="nav_catalog">Каталог</span>
+    </a>
+    <button onclick="window.Modal.open('cart-drawer')" class="flex flex-col items-center text-[10px] text-neutral-600 relative">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="cart-badge-count absolute -top-1 right-2 bg-neutral-900 text-white text-[9px] font-bold w-4 h-4 rounded-full items-center justify-center hidden">0</span>
+      <span data-i18n="nav_cart">Кошик</span>
+    </button>
+    <a href="/profile" class="flex flex-col items-center text-[10px] text-neutral-600">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span data-i18n="nav_profile">Профіль</span>
+    </a>
+  </div>
+
+  <!-- Cart Side Drawer -->
+  <div id="cart-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('cart-drawer')">
+    <div class="drawer-content">
+      <div class="p-4 border-b border-[#E7E2DA] flex justify-between items-center">
+        <h3 class="font-serif text-xl font-semibold" data-i18n="cart_drawer_title">Кошик покупок</h3>
+        <button onclick="window.Modal.close('cart-drawer')" class="text-neutral-500 hover:text-neutral-900 text-lg">✕</button>
+      </div>
+
+      <!-- Free shipping bar -->
+      <div id="cart-drawer-freeship" class="p-3 bg-[#FAF8F5] border-b border-[#E7E2DA]"></div>
+
+      <div id="cart-drawer-items" class="flex-1 overflow-y-auto p-4"></div>
+
+      <div id="cart-drawer-empty" class="hidden p-8 text-center my-auto">
+        <svg class="mx-auto text-neutral-300 mb-3" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <p class="text-sm text-neutral-500 mb-4" data-i18n="cart_empty">Ваш кошик порожній</p>
+        <a href="/catalog" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary btn-sm" data-i18n="cart_continue_shopping">Перейти до покупок</a>
+      </div>
+
+      <div id="cart-drawer-footer" class="p-4 border-t border-[#E7E2DA] bg-[#FAF8F5]">
+        <div class="flex justify-between items-center mb-4 text-base font-semibold">
+          <span data-i18n="cart_total">Разом:</span>
+          <span id="cart-drawer-subtotal">0 ₴</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <a href="/checkout" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary w-full py-3" data-i18n="cart_checkout_btn">Оформити замовлення</a>
+          <a href="/cart" onclick="window.Modal.close('cart-drawer')" class="btn btn-secondary w-full py-2 text-xs" data-i18n="cart_view_cart">Перейти до кошика</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="drawer-overlay flex items-center justify-center" onclick="if(event.target === this) window.Modal.close('auth-modal')">
+    <div class="modal-dialog p-6 md:p-8 bg-white relative max-w-md w-full">
+      <button onclick="window.Modal.close('auth-modal')" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-lg">✕</button>
       
       <div class="flex border-b border-[#E7E2DA] mb-6">
-        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 active">Вход</button>
-        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent">Регистрация</button>
+        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 active" data-i18n="auth_login_title">Вхід</button>
+        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent" data-i18n="auth_register_title">Реєстрація</button>
       </div>
 
       <!-- Login Form -->
       <form id="auth-form-login" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Email</label>
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
           <input type="email" id="login-email" required class="form-input text-sm" placeholder="anna@example.com">
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="block text-xs font-medium text-neutral-700">Пароль</label>
-            <button type="button" onclick="promptForgotPassword()" class="text-xs text-neutral-500 hover:underline">Забыли пароль?</button>
+            <label class="block text-xs font-medium text-neutral-700" data-i18n="auth_password">Пароль</label>
+            <button type="button" onclick="promptForgotPassword()" class="text-xs text-neutral-500 hover:underline" data-i18n="auth_forgot">Забули пароль?</button>
           </div>
           <input type="password" id="login-password" required class="form-input text-sm" placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary w-full py-3 font-medium">Войти в аккаунт</button>
-
-        <div class="mt-6 pt-4 border-t border-[#F0EDE8] text-xs text-neutral-500 space-y-1">
-          <div><strong>Демо администратор:</strong> admin@female-fabric.ru / Admin123!</div>
-          <div><strong>Демо покупатель:</strong> user@female-fabric.ru / User123!</div>
-        </div>
+        <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_login">Увійти в акаунт</button>
+        <div class="text-[11px] text-neutral-400 text-center">Демо-доступ адміна: admin@female-fabric.ua / Admin123!</div>
       </form>
 
       <!-- Register Form -->
       <form id="auth-form-register" class="space-y-4 hidden">
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Ваше имя</label>
-          <input type="text" id="reg-name" required class="form-input text-sm" placeholder="Анна Иванова">
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_name">Ваше ім'я</label>
+          <input type="text" id="reg-name" required class="form-input text-sm" placeholder="Анна Коваленко">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Email</label>
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
           <input type="email" id="reg-email" required class="form-input text-sm" placeholder="anna@example.com">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Телефон</label>
-          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+7 (999) 000-00-00">
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_phone">Телефон</label>
+          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+38 (097) 000-00-00">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Пароль (минимум 6 символов)</label>
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_password">Пароль (мінімум 6 символів)</label>
           <input type="password" id="reg-password" required minlength="6" class="form-input text-sm" placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary w-full py-3 font-medium">Зарегистрироваться</button>
+        <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_reg">Зареєструватися</button>
       </form>
-
     </div>
-  </main>
+  </div>
 
-  <footer class="bg-[#161616] text-[#FAF8F5] py-8 text-center text-xs text-neutral-400 mt-auto">
-    © 2026 Female-Fabric. Все права защищены.
-  </footer>
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('mobile-menu-drawer')">
+    <div class="drawer-content left">
+      <div class="p-4 border-b border-[#E7E2DA] flex justify-between items-center">
+        <span class="font-serif text-xl font-semibold">Меню</span>
+        <button onclick="window.Modal.close('mobile-menu-drawer')" class="text-neutral-500 text-lg">✕</button>
+      </div>
+      <div class="p-4 space-y-4 text-base font-medium">
+        <a href="/catalog" class="block py-2 border-b border-[#F0EDE8]" data-i18n="menu_all_catalog">Увесь каталог</a>
+        <a href="/catalog?category=dresses" class="block py-2 border-b border-[#F0EDE8]" data-i18n="nav_dresses">Сукні</a>
+        <a href="/catalog?category=blouses" class="block py-2 border-b border-[#F0EDE8]" data-i18n="nav_blouses">Блузи та сорочки</a>
+        <a href="/catalog?category=suits" class="block py-2 border-b border-[#F0EDE8]" data-i18n="nav_suits">Костюми та жакети</a>
+        <a href="/catalog?category=trousers" class="block py-2 border-b border-[#F0EDE8]" data-i18n="nav_trousers">Штани та джинси</a>
+        <a href="/catalog?category=outerwear" class="block py-2 border-b border-[#F0EDE8]" data-i18n="nav_outerwear">Верхній одяг</a>
+        <a href="/catalog?category=knitwear" class="block py-2 border-b border-[#F0EDE8]" data-i18n="nav_knitwear">Трикотаж</a>
+        <a href="/catalog?on_sale=true" class="block py-2 text-rose-600 font-semibold" data-i18n="nav_sale">Розпродаж (Sale)</a>
+      </div>
+    </div>
+  </div>
 
+  <!-- Toast Container placeholder -->
   <div id="toast-container"></div>
+
+  <!-- Scripts -->
   <script src="/static/js/components/toast.js"></script>
   <script src="/static/js/components/modal.js"></script>
   <script src="/static/js/api.js"></script>
   <script src="/static/js/store.js"></script>
   <script src="/static/js/app.js"></script>
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/lang-switcher.js"></script>
   <script>
-    window.promptForgotPassword = async () => {
-      const email = prompt('Введите ваш email для сброса пароля:');
-      if (!email) return;
+    async function handleLoginPageSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-page-email').value;
+      const password = document.getElementById('login-page-password').value;
       try {
-        const res = await window.API.forgotPassword(email);
-        alert(`${res.message}\n${res.reset_token ? 'Токен для сброса: ' + res.reset_token : ''}`);
+        const res = await window.API.login(email, password);
+        window.Store.setUser(res.user);
+        window.Toast.success('Успішний вхід!');
+        window.location.href = '/profile';
       } catch (err) {
-        alert(err.message);
+        window.Toast.error(err.message || 'Помилка входу');
       }
-    };
+    }
   </script>
 </body>
 </html>

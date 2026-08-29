@@ -39,7 +39,7 @@ function renderCartPage(cart) {
   }
 
   if (deliveryEl) {
-    deliveryEl.textContent = cart.delivery_fee === 0 ? 'Бесплатно' : window.Store.formatPrice(cart.delivery_fee);
+    deliveryEl.textContent = cart.delivery_fee === 0 ? 'Безкоштовно' : window.Store.formatPrice(cart.delivery_fee);
   }
 
   if (freeShipBadge) {
@@ -59,11 +59,11 @@ function renderCartPage(cart) {
             <div>
               <a href="/product/${item.product_slug}" style="font-size:1.063rem; font-weight:600; color:#121212;">${item.product_name}</a>
               <div style="font-size:0.875rem; color:#78716C; margin-top:4px;">
-                ${item.size ? `Размер: <strong>${item.size}</strong>` : ''}
-                ${item.color ? ` | Цвет: <strong>${item.color}</strong>` : ''}
+                ${item.size ? `Розмір: <strong>${item.size}</strong>` : ''}
+                ${item.color ? ` | Колір: <strong>${item.color}</strong>` : ''}
               </div>
             </div>
-            <button onclick="window.removeCartItem(${item.id})" style="background:none; border:none; color:#A8A29E; cursor:pointer; font-size:1.25rem;" title="Удалить">✕</button>
+            <button onclick="window.removeCartItem(${item.id})" style="background:none; border:none; color:#A8A29E; cursor:pointer; font-size:1.25rem;" title="Видалити">✕</button>
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">

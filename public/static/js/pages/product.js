@@ -194,7 +194,7 @@ function updateStockDisplay(product) {
   } else if (stock > 0) {
     stockEl.innerHTML = `<span style="color:#D97706; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#D97706; border-radius:50%;"></span> Осталось мало (всего ${stock} шт.)</span>`;
   } else {
-    stockEl.innerHTML = `<span style="color:#B91C1C; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#B91C1C; border-radius:50%;"></span> Нет в наличии</span>`;
+    stockEl.innerHTML = `<span style="color:#B91C1C; display:flex; align-items:center; gap:6px; font-size:0.875rem;"><span style="width:8px; height:8px; background:#B91C1C; border-radius:50%;"></span> Немає в наявності</span>`;
   }
 }
 
@@ -234,7 +234,7 @@ window.handleAddToCart = async () => {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = 'Добавить в корзину';
+      btn.textContent = 'Додати в кошик';
     }
   }
 };

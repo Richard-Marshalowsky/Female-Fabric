@@ -76,7 +76,7 @@ async function loadUserOrders() {
         <div style="background:#FFF; border-radius:12px; border:1px solid #E5E0D8; padding:20px; margin-bottom:16px;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; border-bottom:1px solid #F0EDE8; padding-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div>
-              <div style="font-weight:700; font-size:1.125rem;">Заказ ${order.order_number}</div>
+              <div style="font-weight:700; font-size:1.125rem;">Замовлення ${order.order_number}</div>
               <div style="font-size:0.813rem; color:#78716C;">от ${dateStr}</div>
             </div>
             <div style="text-align:right;">

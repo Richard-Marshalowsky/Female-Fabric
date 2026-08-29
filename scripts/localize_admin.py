@@ -1,4 +1,12 @@
-<!DOCTYPE html>
+import os
+import shutil
+from pathlib import Path
+
+BASE_DIR = Path(r"C:\Users\Pc\.gemini\antigravity\scratch\female-fabric")
+TPL_DIR = BASE_DIR / "app" / "templates"
+PUB_DIR = BASE_DIR / "public"
+
+admin_html = """<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -362,3 +370,8 @@
   <script src="/static/js/pages/admin.js"></script>
 </body>
 </html>
+"""
+
+(TPL_DIR / "admin.html").write_text(admin_html, encoding="utf-8")
+(PUB_DIR / "admin.html").write_text(admin_html, encoding="utf-8")
+print("[OK] admin.html localized and synced")

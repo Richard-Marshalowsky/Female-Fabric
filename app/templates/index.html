@@ -1,16 +1,16 @@
-﻿<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Female-Fabric — Интернет-магазин женской одежды премиум-класса</title>
-  <meta name="description" content="Купить стильную женскую одежду из натуральных тканей: шелковые платья, шерстяные костюмы, кашемировый трикотаж, пальто и аксессуары с доставкой и примеркой.">
-  <meta name="keywords" content="женская одежда, платья, шелк, костюмы, пальто, Female-Fabric">
+  <title>Female-Fabric — Інтернет-магазин жіночого одягу преміум-класу</title>
+  <meta name="description" content="Купити стильний жіночий одяг з натуральних тканин: шовкові сукні, вовняні костюми, кашеміровий трикотаж, пальта та аксесуари з доставкою та примірочною.">
+  <meta name="keywords" content="жіночий одяг, сукні, шовк, костюми, пальта, Female-Fabric">
   <link rel="canonical" href="http://localhost:8000/">
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Female-Fabric — Интернет-магазин женской одежды">
-  <meta property="og:description" content="Современный гардероб из натуральных тканей с безупречной посадкой.">
+  <meta property="og:title" content="Female-Fabric — Інтернет-магазин жіночого одягу">
+  <meta property="og:description" content="Сучасний гардероб з натуральних тканин з бездоганною посадкою.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="http://localhost:8000/">
   <meta property="og:image" content="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=1200&q=80">
@@ -22,13 +22,13 @@
     "@type": "ClothingStore",
     "name": "Female-Fabric",
     "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800",
-    "description": "Интернет-магазин современной женской одежды премиального качества",
+    "description": "Інтернет-магазин сучасного жіночого одягу преміальної якості",
     "url": "http://localhost:8000",
-    "telephone": "+7-999-000-00-01",
+    "telephone": "+38-097-123-45-67",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": "Москва",
-      "addressCountry": "RU"
+      "addressLocality": "Київ",
+      "addressCountry": "UA"
     },
     "priceRange": "$$"
   }
@@ -41,7 +41,7 @@
 
   <!-- Top Announcement Bar -->
   <div class="bg-[#121212] text-[#FAF8F5] text-xs py-2 text-center tracking-wider">
-    Бесплатная доставка с примеркой при заказе от 5 000 ₽ | Скидка 10% на первый заказ
+    <span data-i18n="announcement">Безкоштовна доставка з примірочною при замовленні від 2 500 ₴ | Знижка 10% на перше замовлення</span>
   </div>
 
   <!-- Header -->
@@ -61,43 +61,43 @@
 
       <!-- Desktop Nav -->
       <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
-        <a href="/catalog" class="hover:text-neutral-500 transition">Каталог</a>
-        <a href="/catalog?category=dresses" class="hover:text-neutral-500 transition">Платья</a>
-        <a href="/catalog?category=suits" class="hover:text-neutral-500 transition">Костюмы</a>
-        <a href="/catalog?category=outerwear" class="hover:text-neutral-500 transition">Верхняя одежда</a>
-        <a href="/catalog?on_sale=true" class="text-rose-600 hover:text-rose-700 font-semibold transition">Sale</a>
+        <a href="/catalog" class="hover:text-neutral-500 transition" data-i18n="nav_catalog">Каталог</a>
+        <a href="/catalog?category=dresses" class="hover:text-neutral-500 transition" data-i18n="nav_dresses">Сукні</a>
+        <a href="/catalog?category=suits" class="hover:text-neutral-500 transition" data-i18n="nav_suits">Костюми</a>
+        <a href="/catalog?category=outerwear" class="hover:text-neutral-500 transition" data-i18n="nav_outerwear">Верхній одяг</a>
+        <a href="/catalog?on_sale=true" class="text-rose-600 hover:text-rose-700 font-semibold transition" data-i18n="nav_sale">Sale</a>
       </nav>
 
       <!-- Right Action Icons & Search -->
       <div class="flex items-center space-x-4">
         <!-- Live Search Container -->
         <div class="search-container relative hidden sm:block w-48 lg:w-64">
-          <input type="text" placeholder="Поиск одежды..." class="site-search-input w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#E7E2DA] rounded-full focus:outline-none focus:border-neutral-900">
+          <input type="text" data-i18n="search_placeholder" placeholder="Пошук одягу..." class="site-search-input w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#E7E2DA] rounded-full focus:outline-none focus:border-neutral-900">
           <svg class="absolute left-3 top-2.5 text-neutral-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <div id="search-autocomplete-dropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-[#E7E2DA] overflow-hidden z-50"></div>
         </div>
 
         <!-- Account -->
         <div class="auth-guest-view">
-          <button onclick="window.Modal.open('auth-modal')" class="p-2 text-neutral-800 hover:text-neutral-500 transition" title="Войти в аккаунт">
+          <button onclick="window.Modal.open('auth-modal')" class="p-2 text-neutral-800 hover:text-neutral-500 transition" title="Увійти в акаунт">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </button>
         </div>
         <div class="auth-user-view hidden flex items-center space-x-2">
-          <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 flex items-center gap-1 text-xs font-medium" title="Личный кабинет">
+          <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 flex items-center gap-1 text-xs font-medium" title="Особистий кабінет">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span class="user-name-slot hidden lg:inline">Кабинет</span>
+            <span class="user-name-slot hidden lg:inline" data-i18n="nav_cabinet">Кабінет</span>
           </a>
-          <a href="/admin" class="admin-nav-link hidden text-xs bg-neutral-900 text-white px-2.5 py-1 rounded font-medium hover:bg-neutral-800">Админка</a>
+          <a href="/admin" class="admin-nav-link hidden text-xs bg-neutral-900 text-white px-2.5 py-1 rounded font-medium hover:bg-neutral-800" data-i18n="nav_admin">Адмінка</a>
         </div>
 
         <!-- Wishlist -->
-        <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Избранное">
+        <a href="/profile" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Обране">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
         </a>
 
         <!-- Cart Button (Opens Drawer) -->
-        <button onclick="window.Modal.open('cart-drawer')" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Корзина">
+        <button onclick="window.Modal.open('cart-drawer')" class="p-2 text-neutral-800 hover:text-neutral-500 relative" title="Кошик">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="cart-badge-count absolute -top-1 -right-1 bg-neutral-900 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center hidden">0</span>
         </button>
@@ -109,21 +109,21 @@
   <!-- Hero Section -->
   <section class="relative bg-[#EAE5DF] min-h-[520px] md:min-h-[640px] flex items-center overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80" alt="Female-Fabric New Season Collection" class="w-full h-full object-cover object-center brightness-90">
+      <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80" alt="Female-Fabric Нова колекція" class="w-full h-full object-cover object-center brightness-90">
       <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
     </div>
 
     <div class="container mx-auto px-4 relative z-10 text-white max-w-2xl py-16">
-      <span class="text-xs uppercase tracking-[0.3em] font-semibold text-[#C5A880] mb-3 block">Новая коллекция 2026</span>
-      <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-light leading-tight mb-6">
-        Элегантность в каждой нити
+      <span class="text-xs uppercase tracking-[0.3em] font-semibold text-[#C5A880] mb-3 block" data-i18n="hero_subtitle">Нова колекція 2026</span>
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-light leading-tight mb-6" data-i18n="hero_title">
+        Елегантність у кожній нитці
       </h1>
-      <p class="text-sm md:text-base text-neutral-200 mb-8 max-w-lg leading-relaxed">
-        Безупречный крой, премиальные натуральные ткани и утонченный стиль для современной женщины.
+      <p class="text-sm md:text-base text-neutral-200 mb-8 max-w-lg leading-relaxed" data-i18n="hero_desc">
+        Бездоганний крій, преміальні натуральні тканини та витончений стиль для сучасної жінки.
       </p>
       <div class="flex flex-wrap gap-4">
-        <a href="/catalog" class="btn btn-primary px-8 py-3.5 bg-white text-neutral-900 hover:bg-neutral-100 font-medium">Смотреть каталог</a>
-        <a href="/catalog?category=dresses" class="btn btn-secondary px-8 py-3.5 border-white text-white hover:bg-white hover:text-neutral-900 font-medium">Платья и шелк</a>
+        <a href="/catalog" class="btn btn-primary px-8 py-3.5 bg-white text-neutral-900 hover:bg-neutral-100 font-medium" data-i18n="hero_btn_catalog">Дивитися каталог</a>
+        <a href="/catalog?category=dresses" class="btn btn-secondary px-8 py-3.5 border-white text-white hover:bg-white hover:text-neutral-900 font-medium" data-i18n="hero_btn_dresses">Сукні та шовк</a>
       </div>
     </div>
   </section>
@@ -133,10 +133,10 @@
     <div class="container mx-auto px-4">
       <div class="flex justify-between items-end mb-10">
         <div>
-          <span class="text-xs uppercase tracking-widest text-neutral-500 block mb-1">Коллекции</span>
-          <h2 class="text-2xl md:text-3xl font-serif">Категории одежды</h2>
+          <span class="text-xs uppercase tracking-widest text-neutral-500 block mb-1" data-i18n="cat_subtitle">Колекції</span>
+          <h2 class="text-2xl md:text-3xl font-serif" data-i18n="cat_title">Категорії одягу</h2>
         </div>
-        <a href="/catalog" class="text-sm font-medium hover:underline text-neutral-700">Все категории →</a>
+        <a href="/catalog" class="text-sm font-medium hover:underline text-neutral-700" data-i18n="cat_view_all">Усі категорії →</a>
       </div>
 
       <div id="home-categories-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -150,10 +150,10 @@
     <div class="container mx-auto px-4">
       <div class="flex justify-between items-end mb-10">
         <div>
-          <span class="text-xs uppercase tracking-widest text-neutral-500 block mb-1">Выбор стилистов</span>
-          <h2 class="text-2xl md:text-3xl font-serif">Популярные модели</h2>
+          <span class="text-xs uppercase tracking-widest text-neutral-500 block mb-1" data-i18n="featured_subtitle">Вибір стилістів</span>
+          <h2 class="text-2xl md:text-3xl font-serif" data-i18n="featured_title">Популярні моделі</h2>
         </div>
-        <a href="/catalog?sort=popular" class="text-sm font-medium hover:underline text-neutral-700">Смотреть все →</a>
+        <a href="/catalog?sort=popular" class="text-sm font-medium hover:underline text-neutral-700" data-i18n="featured_view_all">Дивитися всі →</a>
       </div>
 
       <div id="home-featured-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -167,15 +167,15 @@
     <div class="container mx-auto px-4">
       <div class="bg-[#1C1917] text-white rounded-2xl overflow-hidden shadow-xl grid md:grid-cols-2 items-center">
         <div class="p-8 md:p-14">
-          <span class="text-xs uppercase tracking-[0.2em] text-[#C5A880] font-semibold mb-2 block">Специальное предложение</span>
-          <h2 class="text-3xl md:text-4xl font-serif font-normal mb-4 leading-tight">Весенняя элегантность со скидкой до 25%</h2>
-          <p class="text-neutral-300 text-sm md:text-base mb-8 leading-relaxed">
-            Пополните гардероб изысканными шелковыми комбинациями, шерстяными жакетами и струящимися брюками.
+          <span class="text-xs uppercase tracking-[0.2em] text-[#C5A880] font-semibold mb-2 block" data-i18n="promo_subtitle">Спеціальна пропозиція</span>
+          <h2 class="text-3xl md:text-4xl font-serif font-normal mb-4 leading-tight" data-i18n="promo_title">Весняна елегантність зі знижкою до 25%</h2>
+          <p class="text-neutral-300 text-sm md:text-base mb-8 leading-relaxed" data-i18n="promo_desc">
+            Поповніть гардероб вишуканими шовковими комбінаціями, шерстяними жакетами та струмуючими штанами.
           </p>
-          <a href="/catalog?on_sale=true" class="btn bg-[#C5A880] text-neutral-900 hover:bg-[#B3956D] font-medium px-8 py-3 rounded-md inline-block">Перейти к скидкам</a>
+          <a href="/catalog?on_sale=true" class="btn bg-[#C5A880] text-neutral-900 hover:bg-[#B3956D] font-medium px-8 py-3 rounded-md inline-block" data-i18n="promo_btn">Перейти до знижок</a>
         </div>
         <div class="h-72 md:h-full min-h-[320px]">
-          <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1000&q=80" alt="Special Promo Female Fabric" class="w-full h-full object-cover">
+          <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1000&q=80" alt="Спеціальна пропозиція Female Fabric" class="w-full h-full object-cover">
         </div>
       </div>
     </div>
@@ -186,10 +186,10 @@
     <div class="container mx-auto px-4">
       <div class="flex justify-between items-end mb-10">
         <div>
-          <span class="text-xs uppercase tracking-widest text-neutral-500 block mb-1">Новинки недели</span>
-          <h2 class="text-2xl md:text-3xl font-serif">Новые поступления</h2>
+          <span class="text-xs uppercase tracking-widest text-neutral-500 block mb-1" data-i18n="new_subtitle">Новинки тижня</span>
+          <h2 class="text-2xl md:text-3xl font-serif" data-i18n="new_title">Нові надходження</h2>
         </div>
-        <a href="/catalog?sort=newest" class="text-sm font-medium hover:underline text-neutral-700">Все новинки →</a>
+        <a href="/catalog?sort=newest" class="text-sm font-medium hover:underline text-neutral-700" data-i18n="new_view_all">Усі новинки →</a>
       </div>
 
       <div id="home-new-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -208,8 +208,8 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
           </div>
           <div>
-            <h4 class="font-semibold text-sm mb-1">Примерка перед покупкой</h4>
-            <p class="text-xs text-neutral-500 leading-relaxed">Курьер подождет 15 минут, пока вы примерите понравившиеся модели.</p>
+            <h4 class="font-semibold text-sm mb-1" data-i18n="adv_1_title">Примірка перед покупкою</h4>
+            <p class="text-xs text-neutral-500 leading-relaxed" data-i18n="adv_1_desc">Кур'єр зачекає 15 хвилин, поки ви приміряєте обрані моделі.</p>
           </div>
         </div>
 
@@ -218,8 +218,8 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </div>
           <div>
-            <h4 class="font-semibold text-sm mb-1">Быстрая доставка</h4>
-            <p class="text-xs text-neutral-500 leading-relaxed">Доставка по всей России курьером или в пункты выдачи СДЭК.</p>
+            <h4 class="font-semibold text-sm mb-1" data-i18n="adv_2_title">Швидка доставка</h4>
+            <p class="text-xs text-neutral-500 leading-relaxed" data-i18n="adv_2_desc">Доставка по всій Україні Новою Поштою або Укрпоштою.</p>
           </div>
         </div>
 
@@ -228,8 +228,8 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
           </div>
           <div>
-            <h4 class="font-semibold text-sm mb-1">100% натуральные ткани</h4>
-            <p class="text-xs text-neutral-500 leading-relaxed">Шелк Mulberry, кашемир, тонкая шерсть и органический хлопок.</p>
+            <h4 class="font-semibold text-sm mb-1" data-i18n="adv_3_title">100% натуральні тканини</h4>
+            <p class="text-xs text-neutral-500 leading-relaxed" data-i18n="adv_3_desc">Шовк Mulberry, кашемір, тонка вовна та органічна бавовна.</p>
           </div>
         </div>
 
@@ -238,8 +238,8 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           </div>
           <div>
-            <h4 class="font-semibold text-sm mb-1">Легкий возврат 14 дней</h4>
-            <p class="text-xs text-neutral-500 leading-relaxed">Простая процедура возврата без лишних вопросов и чеков.</p>
+            <h4 class="font-semibold text-sm mb-1" data-i18n="adv_4_title">Легке повернення 14 днів</h4>
+            <p class="text-xs text-neutral-500 leading-relaxed" data-i18n="adv_4_desc">Проста процедура повернення без зайвих запитань.</p>
           </div>
         </div>
 
@@ -255,50 +255,50 @@
         <div>
           <div class="font-serif text-2xl tracking-wider uppercase mb-4">Female-Fabric</div>
           <p class="text-xs text-neutral-400 leading-relaxed mb-6">
-            Интернет-магазин женской одежды. Лаконичность, качество и эстетика на каждый день.
+            Інтернет-магазин жіночого одягу. Лаконічність, якість та естетика на кожний день.
           </p>
           <div class="text-xs text-neutral-400">
-            <div>Тел: +7 (999) 000-00-01</div>
-            <div>Email: support@female-fabric.ru</div>
+            <div>Тел: +38 (097) 123-45-67</div>
+            <div>Email: support@female-fabric.ua</div>
           </div>
         </div>
 
         <div>
-          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider">Каталог</h4>
+          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider" data-i18n="nav_catalog">Каталог</h4>
           <ul class="space-y-2 text-xs text-neutral-400">
-            <li><a href="/catalog?category=dresses" class="hover:text-white transition">Платья</a></li>
-            <li><a href="/catalog?category=blouses" class="hover:text-white transition">Блузки и рубашки</a></li>
-            <li><a href="/catalog?category=suits" class="hover:text-white transition">Костюмы и жакеты</a></li>
-            <li><a href="/catalog?category=outerwear" class="hover:text-white transition">Верхняя одежда</a></li>
+            <li><a href="/catalog?category=dresses" class="hover:text-white transition" data-i18n="nav_dresses">Сукні</a></li>
+            <li><a href="/catalog?category=blouses" class="hover:text-white transition">Блузи та сорочки</a></li>
+            <li><a href="/catalog?category=suits" class="hover:text-white transition">Костюми та жакети</a></li>
+            <li><a href="/catalog?category=outerwear" class="hover:text-white transition" data-i18n="nav_outerwear">Верхній одяг</a></li>
             <li><a href="/catalog?category=knitwear" class="hover:text-white transition">Трикотаж</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider">Покупателям</h4>
+          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider">Покупцям</h4>
           <ul class="space-y-2 text-xs text-neutral-400">
-            <li><a href="/profile" class="hover:text-white transition">Личный кабинет</a></li>
-            <li><a href="/cart" class="hover:text-white transition">Корзина</a></li>
-            <li><a href="/checkout" class="hover:text-white transition">Оформление заказа</a></li>
-            <li><a href="/catalog?on_sale=true" class="hover:text-white transition">Распродажа (Sale)</a></li>
+            <li><a href="/profile" class="hover:text-white transition">Особистий кабінет</a></li>
+            <li><a href="/cart" class="hover:text-white transition" data-i18n="nav_cart">Кошик</a></li>
+            <li><a href="/checkout" class="hover:text-white transition">Оформлення замовлення</a></li>
+            <li><a href="/catalog?on_sale=true" class="hover:text-white transition">Розпродаж (Sale)</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider">Рассылка</h4>
-          <p class="text-xs text-neutral-400 mb-4">Получайте первыми уведомления о закрытых распродажах и новых коллекциях.</p>
-          <form onsubmit="event.preventDefault(); window.Toast.success('Спасибо за подписку!');" class="flex gap-2">
+          <h4 class="font-medium text-sm text-neutral-200 mb-4 uppercase tracking-wider">Розсилка</h4>
+          <p class="text-xs text-neutral-400 mb-4">Отримуйте першими сповіщення про закриті розпродажі та нові колекції.</p>
+          <form onsubmit="event.preventDefault(); window.Toast.success('Дякуємо за підписку!');" class="flex gap-2">
             <input type="email" placeholder="Ваш email" required class="bg-neutral-800 text-white text-xs px-3 py-2 rounded focus:outline-none flex-1 border border-neutral-700">
-            <button type="submit" class="bg-[#C5A880] text-neutral-900 text-xs px-4 py-2 rounded font-semibold hover:bg-[#B3956D]">ОК</button>
+            <button type="submit" class="bg-[#C5A880] text-neutral-900 text-xs px-4 py-2 rounded font-semibold hover:bg-[#B3956D]">OK</button>
           </form>
         </div>
 
       </div>
 
       <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-neutral-500 gap-4">
-        <div>© 2026 Female-Fabric. Все права защищены.</div>
+        <div>© 2026 Female-Fabric. Всі права захищені.</div>
         <div class="flex space-x-6">
-          <span>Оплата картами онлайн, СБП, Долями</span>
+          <span>Оплата карткою онлайн, Apple Pay, Google Pay</span>
         </div>
       </div>
     </div>
@@ -308,20 +308,20 @@
   <div class="mobile-nav-bar">
     <a href="/" class="flex flex-col items-center text-[10px] text-neutral-900">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-      <span>Главная</span>
+      <span data-i18n="nav_home">Головна</span>
     </a>
     <a href="/catalog" class="flex flex-col items-center text-[10px] text-neutral-600">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-      <span>Каталог</span>
+      <span data-i18n="nav_catalog">Каталог</span>
     </a>
     <button onclick="window.Modal.open('cart-drawer')" class="flex flex-col items-center text-[10px] text-neutral-600 relative">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       <span class="cart-badge-count absolute -top-1 right-2 bg-neutral-900 text-white text-[9px] font-bold w-4 h-4 rounded-full items-center justify-center hidden">0</span>
-      <span>Корзина</span>
+      <span data-i18n="nav_cart">Кошик</span>
     </button>
     <a href="/profile" class="flex flex-col items-center text-[10px] text-neutral-600">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Профиль</span>
+      <span data-i18n="nav_profile">Профіль</span>
     </a>
   </div>
 
@@ -329,7 +329,7 @@
   <div id="cart-drawer" class="drawer-overlay" onclick="if(event.target === this) window.Modal.close('cart-drawer')">
     <div class="drawer-content">
       <div class="p-4 border-b border-[#E7E2DA] flex justify-between items-center">
-        <h3 class="font-serif text-xl font-semibold">Корзина покупок</h3>
+        <h3 class="font-serif text-xl font-semibold" data-i18n="cart_drawer_title">Кошик покупок</h3>
         <button onclick="window.Modal.close('cart-drawer')" class="text-neutral-500 hover:text-neutral-900 text-lg">✕</button>
       </div>
 
@@ -340,18 +340,18 @@
 
       <div id="cart-drawer-empty" class="hidden p-8 text-center my-auto">
         <svg class="mx-auto text-neutral-300 mb-3" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <p class="text-sm text-neutral-500 mb-4">Ваша корзина пуста</p>
-        <a href="/catalog" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary btn-sm">Перейти к покупкам</a>
+        <p class="text-sm text-neutral-500 mb-4" data-i18n="cart_empty">Ваш кошик порожній</p>
+        <a href="/catalog" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary btn-sm">Перейти до покупок</a>
       </div>
 
       <div id="cart-drawer-footer" class="p-4 border-t border-[#E7E2DA] bg-[#FAF8F5]">
         <div class="flex justify-between items-center mb-4 text-base font-semibold">
-          <span>Итого:</span>
-          <span id="cart-drawer-subtotal">0 ₽</span>
+          <span data-i18n="cart_total">Разом:</span>
+          <span id="cart-drawer-subtotal">0 ₴</span>
         </div>
         <div class="flex flex-col gap-2">
-          <a href="/checkout" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary w-full py-3">Оформить заказ</a>
-          <a href="/cart" onclick="window.Modal.close('cart-drawer')" class="btn btn-secondary w-full py-2 text-xs">Перейти в корзину</a>
+          <a href="/checkout" onclick="window.Modal.close('cart-drawer')" class="btn btn-primary w-full py-3" data-i18n="cart_checkout_btn">Оформити замовлення</a>
+          <a href="/cart" onclick="window.Modal.close('cart-drawer')" class="btn btn-secondary w-full py-2 text-xs" data-i18n="cart_view_cart">Перейти до кошика</a>
         </div>
       </div>
     </div>
@@ -363,46 +363,46 @@
       <button onclick="window.Modal.close('auth-modal')" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-lg">✕</button>
       
       <div class="flex border-b border-[#E7E2DA] mb-6">
-        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 active">Вход</button>
-        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent">Регистрация</button>
+        <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 active" data-i18n="auth_login_title">Вхід</button>
+        <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent" data-i18n="auth_register_title">Реєстрація</button>
       </div>
 
       <!-- Login Form -->
       <form id="auth-form-login" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Email</label>
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
           <input type="email" id="login-email" required class="form-input text-sm" placeholder="anna@example.com">
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="block text-xs font-medium text-neutral-700">Пароль</label>
-            <button type="button" onclick="promptForgotPassword()" class="text-xs text-neutral-500 hover:underline">Забыли пароль?</button>
+            <label class="block text-xs font-medium text-neutral-700" data-i18n="auth_password">Пароль</label>
+            <button type="button" onclick="promptForgotPassword()" class="text-xs text-neutral-500 hover:underline">Забули пароль?</button>
           </div>
           <input type="password" id="login-password" required class="form-input text-sm" placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary w-full py-3 font-medium">Войти в аккаунт</button>
-        <div class="text-[11px] text-neutral-400 text-center">Демо-доступ админа: admin@female-fabric.ru / Admin123!</div>
+        <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_login">Увійти в акаунт</button>
+        <div class="text-[11px] text-neutral-400 text-center">Демо-доступ адміна: admin@female-fabric.ua / Admin123!</div>
       </form>
 
       <!-- Register Form -->
       <form id="auth-form-register" class="space-y-4 hidden">
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Ваше имя</label>
-          <input type="text" id="reg-name" required class="form-input text-sm" placeholder="Анна Иванова">
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_name">Ваше ім'я</label>
+          <input type="text" id="reg-name" required class="form-input text-sm" placeholder="Анна Коваленко">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Email</label>
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_email">Email</label>
           <input type="email" id="reg-email" required class="form-input text-sm" placeholder="anna@example.com">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Телефон</label>
-          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+7 (999) 000-00-00">
+          <label class="block text-xs font-medium text-neutral-700 mb-1" data-i18n="auth_phone">Телефон</label>
+          <input type="tel" id="reg-phone" class="form-input text-sm" placeholder="+38 (097) 000-00-00">
         </div>
         <div>
-          <label class="block text-xs font-medium text-neutral-700 mb-1">Пароль (минимум 6 символов)</label>
+          <label class="block text-xs font-medium text-neutral-700 mb-1">Пароль (мінімум 6 символів)</label>
           <input type="password" id="reg-password" required minlength="6" class="form-input text-sm" placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary w-full py-3 font-medium">Зарегистрироваться</button>
+        <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_reg">Зареєструватися</button>
       </form>
     </div>
   </div>
@@ -415,14 +415,14 @@
         <button onclick="window.Modal.close('mobile-menu-drawer')" class="text-neutral-500 text-lg">✕</button>
       </div>
       <div class="p-4 space-y-4 text-base font-medium">
-        <a href="/catalog" class="block py-2 border-b border-[#F0EDE8]">Весь каталог</a>
-        <a href="/catalog?category=dresses" class="block py-2 border-b border-[#F0EDE8]">Платья</a>
-        <a href="/catalog?category=blouses" class="block py-2 border-b border-[#F0EDE8]">Блузки и рубашки</a>
-        <a href="/catalog?category=suits" class="block py-2 border-b border-[#F0EDE8]">Костюмы и жакеты</a>
-        <a href="/catalog?category=trousers" class="block py-2 border-b border-[#F0EDE8]">Брюки и джинсы</a>
-        <a href="/catalog?category=outerwear" class="block py-2 border-b border-[#F0EDE8]">Верхняя одежда</a>
+        <a href="/catalog" class="block py-2 border-b border-[#F0EDE8]">Увесь каталог</a>
+        <a href="/catalog?category=dresses" class="block py-2 border-b border-[#F0EDE8]">Сукні</a>
+        <a href="/catalog?category=blouses" class="block py-2 border-b border-[#F0EDE8]">Блузи та сорочки</a>
+        <a href="/catalog?category=suits" class="block py-2 border-b border-[#F0EDE8]">Костюми та жакети</a>
+        <a href="/catalog?category=trousers" class="block py-2 border-b border-[#F0EDE8]">Штани та джинси</a>
+        <a href="/catalog?category=outerwear" class="block py-2 border-b border-[#F0EDE8]">Верхній одяг</a>
         <a href="/catalog?category=knitwear" class="block py-2 border-b border-[#F0EDE8]">Трикотаж</a>
-        <a href="/catalog?on_sale=true" class="block py-2 text-rose-600 font-semibold">Распродажа (Sale)</a>
+        <a href="/catalog?on_sale=true" class="block py-2 text-rose-600 font-semibold">Розпродаж (Sale)</a>
       </div>
     </div>
   </div>
@@ -436,14 +436,16 @@
   <script src="/static/js/api.js"></script>
   <script src="/static/js/store.js"></script>
   <script src="/static/js/app.js"></script>
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/lang-switcher.js"></script>
   <script src="/static/js/pages/home.js"></script>
   <script>
     window.promptForgotPassword = async () => {
-      const email = prompt('Введите ваш email для сброса пароля:');
+      const email = prompt('Введіть ваш email для скидання пароля:');
       if (!email) return;
       try {
         const res = await window.API.forgotPassword(email);
-        alert(`${res.message}\n${res.reset_token ? 'Токен для сброса: ' + res.reset_token : ''}`);
+        alert(`${res.message}\n${res.reset_token ? 'Токен для скидання: ' + res.reset_token : ''}`);
       } catch (err) {
         alert(err.message);
       }

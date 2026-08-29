@@ -86,7 +86,7 @@ function renderCheckoutSummary(cart) {
   }
 
   if (deliveryEl) {
-    deliveryEl.textContent = cart.delivery_fee === 0 ? 'Бесплатно' : window.Store.formatPrice(cart.delivery_fee);
+    deliveryEl.textContent = cart.delivery_fee === 0 ? 'Безкоштовно' : window.Store.formatPrice(cart.delivery_fee);
   }
 }
 
@@ -120,6 +120,6 @@ async function handleCheckoutSubmit(e) {
   } catch (err) {
     window.Toast.error(err.message || 'Ошибка оформления заказа');
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Подтвердить заказ';
+    submitBtn.textContent = 'Підтвердити замовлення';
   }
 }

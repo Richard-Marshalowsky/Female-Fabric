@@ -61,7 +61,7 @@ async function loadNewArrivals() {
 
 function renderProductGrid(container, products) {
   if (!products || products.length === 0) {
-    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#78716C;">Скоро поступят новые модели</div>';
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#78716C;">Скоро з'являться нові моделі</div>';
     return;
   }
 
@@ -70,7 +70,7 @@ function renderProductGrid(container, products) {
       <button onclick="window.Store.toggleFavorite(${p.id}).then(() => this.classList.toggle('active', window.Store.isFavorite(${p.id})))" 
         class="fav-btn ${p.is_favorite ? 'active' : ''}" 
         style="position:absolute; top:12px; right:12px; z-index:10; background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); border:none; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.08);"
-        title="В избранное">
+        title="В обране">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="${p.is_favorite ? '#E11D48' : 'none'}" stroke="${p.is_favorite ? '#E11D48' : '#121212'}" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
       </button>
 
@@ -85,7 +85,7 @@ function renderProductGrid(container, products) {
 
       <div style="padding:16px; display:flex; flex-direction:column; flex:1; justify-content:space-between;">
         <div>
-          <div style="font-size:0.75rem; text-transform:uppercase; color:#78716C; letter-spacing:0.05em; margin-bottom:4px;">${p.category_name || 'Одежда'}</div>
+          <div style="font-size:0.75rem; text-transform:uppercase; color:#78716C; letter-spacing:0.05em; margin-bottom:4px;">${p.category_name || 'Одяг'}</div>
           <a href="/product/${p.slug}" style="font-size:0.938rem; font-weight:500; color:#121212; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.35; height:38px; margin-bottom:8px;">${p.name}</a>
           
           ${p.colors && p.colors.length > 0 ? `
@@ -104,7 +104,7 @@ function renderProductGrid(container, products) {
           </div>
 
           <a href="/product/${p.slug}" class="btn btn-secondary btn-sm" style="width:100%;">
-            Выбрать размер
+            Вибрати розмір
           </a>
         </div>
       </div>

@@ -94,7 +94,7 @@ function renderCartDrawer(cart) {
     if (cart.amount_left_for_free_delivery > 0) {
       freeShipBar.innerHTML = `
         <div style="font-size:0.813rem; margin-bottom:4px; display:flex; justify-content:space-between;">
-          <span>До бесплатной доставки:</span>
+          <span>До безкоштовної доставки:</span>
           <strong>${window.Store.formatPrice(cart.amount_left_for_free_delivery)}</strong>
         </div>
         <div style="height:4px; background:#E5E0D8; border-radius:2px; overflow:hidden;">
@@ -104,7 +104,7 @@ function renderCartDrawer(cart) {
     } else {
       freeShipBar.innerHTML = `
         <div style="font-size:0.813rem; color:#15803D; font-weight:500; display:flex; align-items:center; gap:4px;">
-          ✓ Бесплатная доставка включена!
+          ✓ Безкоштовна доставка включена!
         </div>
       `;
     }
@@ -117,11 +117,11 @@ function renderCartDrawer(cart) {
         <div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <a href="/product/${item.product_slug}" style="font-weight:500; font-size:0.875rem; line-height:1.3; color:#121212;">${item.product_name}</a>
-            <button onclick="window.removeCartItem(${item.id})" style="background:none; border:none; color:#A8A29E; cursor:pointer; padding:2px;" title="Удалить">✕</button>
+            <button onclick="window.removeCartItem(${item.id})" style="background:none; border:none; color:#A8A29E; cursor:pointer; padding:2px;" title="Видалити">✕</button>
           </div>
           <div style="font-size:0.75rem; color:#78716C; margin-top:2px;">
-            ${item.size ? `Размер: <strong>${item.size}</strong>` : ''} 
-            ${item.color ? ` | Цвет: ${item.color}` : ''}
+            ${item.size ? `Розмір: <strong>${item.size}</strong>` : ''} 
+            ${item.color ? ` | Колір: ${item.color}` : ''}
           </div>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
@@ -143,7 +143,7 @@ window.changeCartQty = async (itemId, newQty) => {
     window.Store.cart = updated;
     window.Store.emit('cart:updated', updated);
   } catch (err) {
-    window.Toast.error(err.message || 'Ошибка обновления корзины');
+    window.Toast.error(err.message || 'Помилка оновлення кошика');
   }
 };
 
@@ -152,9 +152,9 @@ window.removeCartItem = async (itemId) => {
     const updated = await window.API.removeFromCart(itemId);
     window.Store.cart = updated;
     window.Store.emit('cart:updated', updated);
-    window.Toast.info('Товар удален из корзины');
+    window.Toast.info('Товар видалено з кошика');
   } catch (err) {
-    window.Toast.error(err.message || 'Ошибка удаления');
+    window.Toast.error(err.message || 'Помилка видалення');
   }
 };
 
@@ -180,7 +180,7 @@ function setupLiveSearch() {
           if (!dropdown) return;
 
           if (res.items.length === 0) {
-            dropdown.innerHTML = '<div style="padding:16px; text-align:center; color:#78716C; font-size:0.875rem;">Ничего не найдено</div>';
+            dropdown.innerHTML = '<div style="padding:16px; text-align:center; color:#78716C; font-size:0.875rem;">Нічого не знайдено</div>';
           } else {
             dropdown.innerHTML = `
               <div style="padding:8px 12px; font-size:0.75rem; text-transform:uppercase; color:#A8A29E; font-weight:600;">Найдено товаров (${res.total})</div>

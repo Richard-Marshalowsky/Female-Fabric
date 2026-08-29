@@ -103,8 +103,8 @@ class Store {
   }
 
   formatPrice(price) {
-    if (price === undefined || price === null) return '0 ₽';
-    return Number(price).toLocaleString('ru-RU') + ' ₽';
+    if (price === undefined || price === null) return '0 ₴';
+    return Number(price).toLocaleString('uk-UA') + ' ₴';
   }
 }
 
