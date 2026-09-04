@@ -1,9 +1,9 @@
-// Centralized API Client for Female-Fabric
-class ApiClient {
   constructor() {
     this.baseUrl = '';
     this.sessionKey = 'ff_session_id';
     this.tokenKey = 'ff_access_token';
+    this.cache = new Map();
+    this.cacheTTL = 120000; // 2 minutes RAM cache for instant UI response
   }
 
   getSessionId() {
@@ -25,9 +25,22 @@ class ApiClient {
     } else {
       localStorage.removeItem(this.tokenKey);
     }
+    this.cache.clear();
   }
 
   async request(endpoint, options = {}) {
+    const method = (options.method || 'GET').toUpperCase();
+    const isGet = method === 'GET';
+    const useCache = isGet && options.useCache !== false;
+
+    // Check RAM cache for GET requests
+    if (useCache && this.cache.has(endpoint)) {
+      const cached = this.cache.get(endpoint);
+      if (Date.now() - cached.timestamp < this.cacheTTL) {
+        return cached.data;
+      }
+    }
+
     const headers = options.headers || {};
     
     // Add Authorization Header if available
@@ -70,6 +83,13 @@ class ApiClient {
         error.status = res.status;
         error.data = data;
         throw error;
+      }
+
+      // Store in RAM cache if GET, or clear cache if mutating
+      if (useCache) {
+        this.cache.set(endpoint, { timestamp: Date.now(), data });
+      } else if (!isGet) {
+        this.cache.clear();
       }
 
       return data;

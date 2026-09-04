@@ -1,4 +1,4 @@
-﻿// Catalog Page JavaScript
+// Catalog Page JavaScript
 let currentFilters = {
   category_slug: null,
   q: null,
@@ -24,8 +24,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (urlParams.has('sort')) currentFilters.sort_by = urlParams.get('sort');
   if (urlParams.has('on_sale')) currentFilters.on_sale = true;
 
-  await loadCategoriesFilter();
-  await loadCatalogProducts();
+  await Promise.all([
+    loadCategoriesFilter(),
+    loadCatalogProducts()
+  ]);
   setupFilterEventListeners();
 });
 
