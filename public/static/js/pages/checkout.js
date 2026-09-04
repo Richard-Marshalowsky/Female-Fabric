@@ -102,7 +102,7 @@ async function handleCheckoutSubmit(e) {
   const form = e.target;
   const submitBtn = form.querySelector('button[type="submit"]');
 
-  const deliveryMethod = form.querySelector('input[name="delivery_method"]:checked')?.value || 'Нова Пошта (Кур'єр)';
+  const deliveryMethod = form.querySelector('input[name="delivery_method"]:checked')?.value || "Нова Пошта (Кур'єр)";
   const paymentMethod = form.querySelector('input[name="payment_method"]:checked')?.value || 'Карткою онлайн';
 
   const orderData = {
