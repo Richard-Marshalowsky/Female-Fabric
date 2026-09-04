@@ -1,3 +1,5 @@
+// Centralized API Client for Female-Fabric
+class ApiClient {
   constructor() {
     this.baseUrl = '';
     this.sessionKey = 'ff_session_id';
