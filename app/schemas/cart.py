@@ -21,6 +21,7 @@ class CartItemResponse(BaseModel):
     variant_id: Optional[int] = None
     product_name: str
     product_slug: str
+    sku: Optional[str] = None
     image_url: Optional[str] = None
     size: Optional[str] = None
     color: Optional[str] = None

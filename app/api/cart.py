@@ -19,6 +19,35 @@ def get_or_create_cart(db: Session, user: Optional[User], session_id: Optional[s
             db.add(cart)
             db.commit()
             db.refresh(cart)
+
+        # Merge guest session cart items into user cart
+        if session_id:
+            guest_cart = db.query(Cart).filter(Cart.session_id == session_id).first()
+            if guest_cart and guest_cart.id != cart.id and guest_cart.items:
+                for g_item in guest_cart.items:
+                    existing = db.query(CartItem).filter(
+                        CartItem.cart_id == cart.id,
+                        CartItem.product_id == g_item.product_id,
+                        CartItem.size == g_item.size,
+                        CartItem.color == g_item.color
+                    ).first()
+                    if existing:
+                        existing.quantity += g_item.quantity
+                    else:
+                        new_item = CartItem(
+                            cart_id=cart.id,
+                            product_id=g_item.product_id,
+                            variant_id=g_item.variant_id,
+                            size=g_item.size,
+                            color=g_item.color,
+                            quantity=g_item.quantity,
+                            price=g_item.price
+                        )
+                        db.add(new_item)
+                db.query(CartItem).filter(CartItem.cart_id == guest_cart.id).delete()
+                db.commit()
+                db.refresh(cart)
+
         return cart
     elif session_id:
         cart = db.query(Cart).filter(Cart.session_id == session_id).first()
@@ -93,6 +122,7 @@ def build_cart_response(cart: Cart, db: Session) -> CartResponse:
             variant_id=item.variant_id,
             product_name=prod.name,
             product_slug=prod.slug,
+            sku=prod.sku,
             image_url=img_url,
             size=item.size,
             color=item.color,

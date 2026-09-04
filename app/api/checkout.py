@@ -38,6 +38,10 @@ def create_order(
         user_cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
         if user_cart and user_cart.items:
             items_to_order = user_cart.items
+        elif x_session_id:
+            sess_cart = db.query(Cart).filter(Cart.session_id == x_session_id).first()
+            if sess_cart and sess_cart.items:
+                items_to_order = sess_cart.items
     elif x_session_id:
         sess_cart = db.query(Cart).filter(Cart.session_id == x_session_id).first()
         if sess_cart and sess_cart.items:

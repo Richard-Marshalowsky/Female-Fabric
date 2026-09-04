@@ -137,8 +137,7 @@ function renderCartDrawer(cart) {
             <button onclick="window.removeCartItem(${item.id})" style="background:none; border:none; color:#A8A29E; cursor:pointer; padding:2px;" title="Видалити">✕</button>
           </div>
           <div style="font-size:0.75rem; color:#78716C; margin-top:2px;">
-            ${item.size ? `Розмір: <strong>${item.size}</strong>` : ''} 
-            ${item.color ? ` | Колір: ${item.color}` : ''}
+            ${item.sku ? `<span style="color:#A8A29E; font-weight:500;">Арт: ${item.sku}</span> • ` : ''}${item.size ? `Розмір: <strong>${item.size}</strong>` : ''}${item.color ? ` | Колір: ${item.color}` : ''}
           </div>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
