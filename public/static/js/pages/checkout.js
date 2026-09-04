@@ -1,6 +1,11 @@
-﻿// Checkout Page JavaScript
+// Checkout Page JavaScript
 document.addEventListener('DOMContentLoaded', async () => {
-  renderCheckoutSummary(window.Store.cart);
+  // Ensure store is initialized and cart is fresh
+  if (window.Store) {
+    await window.Store.refreshCart();
+    renderCheckoutSummary(window.Store.cart);
+  }
+
   window.Store.on('cart:updated', (cart) => {
     renderCheckoutSummary(cart);
   });
@@ -46,7 +51,7 @@ async function prefillUserData(user) {
 }
 
 function renderCheckoutSummary(cart) {
-  const itemsContainer = document.getElementById('checkout-items-summary');
+  const itemsContainer = document.getElementById('checkout-items-list') || document.getElementById('checkout-items-summary');
   const subtotalEl = document.getElementById('checkout-subtotal');
   const discountEl = document.getElementById('checkout-discount');
   const discountRow = document.getElementById('checkout-discount-row');
@@ -54,7 +59,9 @@ function renderCheckoutSummary(cart) {
   const totalEl = document.getElementById('checkout-total');
 
   if (!cart || !cart.items || cart.items.length === 0) {
-    if (itemsContainer) itemsContainer.innerHTML = '<div style="color:#78716C;">Кошик порожній</div>';
+    if (itemsContainer) itemsContainer.innerHTML = '<div style="color:#78716C; padding:12px 0;">Кошик порожній</div>';
+    if (subtotalEl) subtotalEl.textContent = '0 ₴';
+    if (totalEl) totalEl.textContent = '0 ₴';
     return;
   }
 
