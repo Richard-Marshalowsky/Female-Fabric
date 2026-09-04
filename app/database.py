@@ -37,6 +37,13 @@ Base = declarative_base()
 def get_db():
     db = SessionLocal()
     try:
+        try:
+            from app.models.category import Category
+            if db.query(Category).count() == 0:
+                from app.core.seed_data import seed_database
+                seed_database(db)
+        except Exception:
+            pass
         yield db
     finally:
         db.close()

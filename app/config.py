@@ -6,12 +6,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Check if running in Vercel serverless environment
 IS_VERCEL = os.getenv('VERCEL', '0') == '1' or os.getenv('VERCEL_ENV') is not None
 
+SEED_DB_PATH = BASE_DIR / 'app' / 'data' / 'female_fabric.db'
+
 if IS_VERCEL:
     UPLOAD_DIR = Path('/tmp/uploads')
     STATIC_DIR = BASE_DIR / 'app' / 'static'
     TEMPLATES_DIR = BASE_DIR / 'app' / 'templates'
     PUBLIC_DIR = BASE_DIR / 'public'
     DEFAULT_DB_PATH = '/tmp/female_fabric.db'
+    
+    # Auto-copy pre-seeded SQLite database to writable /tmp
+    try:
+        target_db = Path(DEFAULT_DB_PATH)
+        if SEED_DB_PATH.exists() and (not target_db.exists() or target_db.stat().st_size < 50000):
+            import shutil
+            target_db.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(SEED_DB_PATH, target_db)
+            print("[Vercel Init] Seed database copied to /tmp/female_fabric.db")
+    except Exception as e:
+        print(f"[Vercel Init Warning] Could not copy seed DB: {e}")
 else:
     UPLOAD_DIR = BASE_DIR / 'app' / 'static' / 'uploads'
     STATIC_DIR = BASE_DIR / 'app' / 'static'

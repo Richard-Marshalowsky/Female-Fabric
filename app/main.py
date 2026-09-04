@@ -77,6 +77,21 @@ app.include_router(admin_orders_router)
 app.include_router(admin_users_router)
 app.include_router(admin_uploads_router)
 
+@app.get("/api/health")
+def api_health():
+    db = SessionLocal()
+    from app.models.category import Category
+    from app.models.product import Product
+    cats = db.query(Category).count()
+    prods = db.query(Product).count()
+    db.close()
+    return {
+        "status": "ok",
+        "categories_count": cats,
+        "products_count": prods,
+        "is_vercel": getattr(settings, "IS_VERCEL", False)
+    }
+
 # Auto-initialize database tables and seed data
 def ensure_db_initialized():
     if settings.AUTO_CREATE_TABLES:
