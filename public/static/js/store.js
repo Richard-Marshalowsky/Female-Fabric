@@ -27,18 +27,57 @@ class Store {
   }
 
   async init() {
-    // 1. Check user token & profile
-    const token = window.API.getToken();
-    if (token) {
+    // 1. Check Supabase session first if available
+    if (window.SupabaseAuth && window.SupabaseAuth.isConfigured()) {
       try {
-        const userData = await window.API.getMe();
-        this.setUser(userData);
+        const session = await window.SupabaseAuth.getSession();
+        if (session && session.user) {
+          const u = session.user;
+          this.setUser({
+            id: u.id,
+            email: u.email,
+            full_name: u.user_metadata?.full_name || u.email.split('@')[0],
+            phone: u.user_metadata?.phone || '',
+            role: 'customer'
+          });
+          window.API.setToken(session.access_token);
+        } else {
+          this.setUser(null);
+        }
       } catch (e) {
-        console.warn('Could not restore user session:', e);
+        console.warn('Supabase session check error:', e);
+      }
+
+      window.SupabaseAuth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const u = session.user;
+          this.setUser({
+            id: u.id,
+            email: u.email,
+            full_name: u.user_metadata?.full_name || u.email.split('@')[0],
+            phone: u.user_metadata?.phone || '',
+            role: 'customer'
+          });
+          window.API.setToken(session.access_token);
+        } else if (event === 'SIGNED_OUT') {
+          this.setUser(null);
+          window.API.setToken(null);
+        }
+      });
+    } else {
+      // Internal backend fallback
+      const token = window.API.getToken();
+      if (token) {
+        try {
+          const userData = await window.API.getMe();
+          this.setUser(userData);
+        } catch (e) {
+          console.warn('Could not restore user session:', e);
+          this.setUser(null);
+        }
+      } else {
         this.setUser(null);
       }
-    } else {
-      this.setUser(null);
     }
 
     // 2. Load favorites (guest or user)
@@ -56,7 +95,31 @@ class Store {
   async refreshCart() {
     try {
       const cartData = await window.API.getCart();
-      this.cart = cartData;
+      if (cartData && cartData.items && cartData.items.length > 0) {
+        this.cart = cartData;
+        try { localStorage.setItem('ff_cart_backup', JSON.stringify(cartData)); } catch(e){}
+      } else {
+        const backupStr = localStorage.getItem('ff_cart_backup');
+        if (backupStr) {
+          try {
+            const backup = JSON.parse(backupStr);
+            if (backup && backup.items && backup.items.length > 0) {
+              for (const it of backup.items) {
+                await window.API.addToCart(it.product_id, it.size, it.color, it.quantity);
+              }
+              const reloaded = await window.API.getCart();
+              this.cart = (reloaded && reloaded.items && reloaded.items.length > 0) ? reloaded : backup;
+              try { localStorage.setItem('ff_cart_backup', JSON.stringify(this.cart)); } catch(e){}
+            } else {
+              this.cart = cartData || { items: [], total_quantity: 0, subtotal: 0, total: 0 };
+            }
+          } catch (e) {
+            this.cart = cartData || { items: [], total_quantity: 0, subtotal: 0, total: 0 };
+          }
+        } else {
+          this.cart = cartData || { items: [], total_quantity: 0, subtotal: 0, total: 0 };
+        }
+      }
       this.emit('cart:updated', this.cart);
     } catch (e) {
       console.error('Failed to load cart:', e);

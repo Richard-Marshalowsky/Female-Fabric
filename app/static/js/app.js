@@ -23,6 +23,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       b.style.display = cart.total_quantity > 0 ? 'inline-flex' : 'none';
     });
     renderCartDrawer(cart);
+    try {
+      if (cart && cart.items && cart.items.length > 0) {
+        localStorage.setItem('ff_cart_backup', JSON.stringify(cart));
+      } else {
+        localStorage.removeItem('ff_cart_backup');
+      }
+    } catch (e) {}
   });
 
   // Update Wishlist Badges
@@ -317,21 +324,43 @@ function setupAuthModal() {
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
+      const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
       const btn = loginForm.querySelector('button[type="submit"]');
 
       try {
         btn.disabled = true;
         btn.textContent = 'Вхід...';
-        const res = await window.API.login({ email, password });
-        window.Store.setUser(res.user);
-        await window.Store.loadFavorites();
-        await window.Store.refreshCart();
-        window.Toast.success(`Вітаємо, ${res.user.full_name}!`);
-        window.Modal?.close('auth-modal');
-        if (window.location.pathname === '/login') {
-          window.location.href = res.user.role === 'admin' ? '/admin' : '/profile';
+
+        let userObj = null;
+        if (window.SupabaseAuth && window.SupabaseAuth.isConfigured()) {
+          const data = await window.SupabaseAuth.signIn(email, password);
+          if (data && data.user) {
+            userObj = {
+              id: data.user.id,
+              email: data.user.email,
+              full_name: data.user.user_metadata?.full_name || data.user.email.split('@')[0],
+              phone: data.user.user_metadata?.phone || '',
+              role: 'customer'
+            };
+            if (data.session) {
+              window.API.setToken(data.session.access_token);
+            }
+          }
+        } else {
+          const res = await window.API.login({ email, password });
+          userObj = res.user;
+        }
+
+        if (userObj) {
+          window.Store.setUser(userObj);
+          await window.Store.loadFavorites();
+          await window.Store.refreshCart();
+          window.Toast.success(`Вітаємо, ${userObj.full_name}!`);
+          window.Modal?.close('auth-modal');
+          if (window.location.pathname === '/login') {
+            window.location.href = userObj.role === 'admin' ? '/admin' : '/profile';
+          }
         }
       } catch (err) {
         window.Toast.error(err.message || 'Помилка входу');
@@ -345,17 +374,40 @@ function setupAuthModal() {
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const full_name = document.getElementById('reg-name').value;
-      const email = document.getElementById('reg-email').value;
-      const phone = document.getElementById('reg-phone')?.value || null;
+      const full_name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone')?.value.trim() || null;
       const password = document.getElementById('reg-password').value;
       const btn = registerForm.querySelector('button[type="submit"]');
 
       try {
         btn.disabled = true;
         btn.textContent = 'Реєстрація...';
-        const res = await window.API.register({ full_name, email, phone, password });
-        window.Store.setUser(res.user);
+
+        let userObj = null;
+        if (window.SupabaseAuth && window.SupabaseAuth.isConfigured()) {
+          const data = await window.SupabaseAuth.signUp(email, password, { full_name, phone });
+          if (data && data.user) {
+            userObj = {
+              id: data.user.id,
+              email: data.user.email,
+              full_name: full_name || data.user.email.split('@')[0],
+              phone: phone || '',
+              role: 'customer'
+            };
+            if (data.session) {
+              window.API.setToken(data.session.access_token);
+              window.Store.setUser(userObj);
+            } else {
+              window.Toast.info('Акаунт створено! Перевірте пошту для підтвердження, якщо увімкнено Confirm Email.');
+            }
+          }
+        } else {
+          const res = await window.API.register({ full_name, email, phone, password });
+          userObj = res.user;
+          window.Store.setUser(userObj);
+        }
+
         window.Toast.success('Реєстрація успішна!');
         window.Modal?.close('auth-modal');
         if (window.location.pathname === '/login') {

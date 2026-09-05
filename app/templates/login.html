@@ -335,6 +335,8 @@
   <!-- Scripts -->
   <script src="/static/js/components/toast.js"></script>
   <script src="/static/js/components/modal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/static/js/supabase.js"></script>
   <script src="/static/js/api.js"></script>
   <script src="/static/js/store.js"></script>
   <script src="/static/js/app.js"></script>
@@ -343,13 +345,33 @@
   <script>
     async function handleLoginPageSubmit(e) {
       e.preventDefault();
-      const email = document.getElementById('login-page-email').value;
+      const email = document.getElementById('login-page-email').value.trim();
       const password = document.getElementById('login-page-password').value;
       try {
-        const res = await window.API.login(email, password);
-        window.Store.setUser(res.user);
-        window.Toast.success('Успішний вхід!');
-        window.location.href = '/profile';
+        let userObj = null;
+        if (window.SupabaseAuth && window.SupabaseAuth.isConfigured()) {
+          const data = await window.SupabaseAuth.signIn(email, password);
+          if (data && data.user) {
+            userObj = {
+              id: data.user.id,
+              email: data.user.email,
+              full_name: data.user.user_metadata?.full_name || data.user.email.split('@')[0],
+              phone: data.user.user_metadata?.phone || '',
+              role: 'customer'
+            };
+            if (data.session) {
+              window.API.setToken(data.session.access_token);
+            }
+          }
+        } else {
+          const res = await window.API.login({ email, password });
+          userObj = res.user;
+        }
+        if (userObj) {
+          window.Store.setUser(userObj);
+          window.Toast.success('Успішний вхід!');
+          window.location.href = userObj.role === 'admin' ? '/admin' : '/profile';
+        }
       } catch (err) {
         window.Toast.error(err.message || 'Помилка входу');
       }

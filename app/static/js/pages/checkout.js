@@ -1,14 +1,27 @@
 // Checkout Page JavaScript
 document.addEventListener('DOMContentLoaded', async () => {
-  // Ensure store is initialized and cart is fresh
+  // 1. If store already has cart or local backup exists, render immediately
+  if (window.Store && window.Store.cart && window.Store.cart.items && window.Store.cart.items.length > 0) {
+    renderCheckoutSummary(window.Store.cart);
+  } else {
+    try {
+      const backup = JSON.parse(localStorage.getItem('ff_cart_backup') || '{}');
+      if (backup && backup.items && backup.items.length > 0) {
+        renderCheckoutSummary(backup);
+      }
+    } catch(e) {}
+  }
+
+  // 2. Listen for cart updates
+  window.Store.on('cart:updated', (cart) => {
+    renderCheckoutSummary(cart);
+  });
+
+  // 3. Ensure store is initialized and cart is verified with backend
   if (window.Store) {
     await window.Store.refreshCart();
     renderCheckoutSummary(window.Store.cart);
   }
-
-  window.Store.on('cart:updated', (cart) => {
-    renderCheckoutSummary(cart);
-  });
 
   if (window.Store.user) {
     prefillUserData(window.Store.user);
@@ -114,7 +127,15 @@ async function handleCheckoutSubmit(e) {
     address: document.getElementById('checkout-address').value.trim(),
     delivery_method: deliveryMethod,
     payment_method: paymentMethod,
-    notes: document.getElementById('checkout-notes')?.value.trim() || null
+    notes: document.getElementById('checkout-notes')?.value.trim() || null,
+    items: (window.Store.cart?.items || []).map(it => ({
+      product_id: it.product_id,
+      variant_id: it.variant_id || null,
+      size: it.size || null,
+      color: it.color || null,
+      quantity: it.quantity,
+      price: it.price
+    }))
   };
 
   try {
@@ -122,6 +143,7 @@ async function handleCheckoutSubmit(e) {
     submitBtn.textContent = 'Оформление заказа...';
 
     const res = await window.API.createOrder(orderData);
+    try { localStorage.removeItem('ff_cart_backup'); } catch(e){}
     await window.Store.refreshCart();
     window.location.href = `/order-success?order_number=${res.order_number}`;
   } catch (err) {

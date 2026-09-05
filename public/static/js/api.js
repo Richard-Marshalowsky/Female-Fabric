@@ -50,7 +50,10 @@ class ApiClient {
   async request(endpoint, options = {}) {
     const method = (options.method || 'GET').toUpperCase();
     const isGet = method === 'GET';
-    const useCache = isGet && options.useCache !== false;
+    // ONLY cache static catalog endpoints like categories and products! Never cache cart, auth, orders, etc.
+    const cacheablePrefixes = ['/api/categories', '/api/products'];
+    const isCacheable = isGet && cacheablePrefixes.some(p => endpoint.startsWith(p));
+    const useCache = isCacheable && options.useCache !== false;
 
     // Check RAM cache for GET requests
     if (useCache && this.cache.has(endpoint)) {
