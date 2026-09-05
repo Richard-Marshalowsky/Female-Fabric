@@ -46,6 +46,14 @@ def register(user_in: UserCreate, request: Request, response: Response, db: Sess
 @router.post('/login', response_model=Token)
 def login(login_in: UserLogin, request: Request, response: Response, db: Session = Depends(get_db)):
     auth_rate_limiter.check(request)
+    
+    # Strictly block revoked default credentials
+    if login_in.password in ["Admin123!", "admin123", "User123!"]:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Неверный email или пароль'
+        )
+
     user = db.query(User).filter(User.email == login_in.email.lower()).first()
     if not user or not verify_password(login_in.password, user.password_hash):
         raise HTTPException(

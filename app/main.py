@@ -87,6 +87,7 @@ def api_health():
     db.close()
     return {
         "status": "ok",
+        "version": "2026.09.05.sec_rotate_1",
         "categories_count": cats,
         "products_count": prods,
         "is_vercel": getattr(settings, "IS_VERCEL", False)
@@ -100,8 +101,18 @@ def ensure_db_initialized():
             db = SessionLocal()
             try:
                 from app.models.category import Category
+                from app.models.user import User
+                from app.core.security import get_password_hash, verify_password
+                import os
                 if db.query(Category).count() == 0:
                     seed_database(db)
+                else:
+                    # Enforce rotated admin password in existing DB
+                    admin_pwd = os.getenv("ADMIN_PASSWORD", "wPSg*3@wQ@k)AcpU)xx4nddK")
+                    admin = db.query(User).filter(User.email == "admin@female-fabric.ua").first()
+                    if admin and not verify_password(admin_pwd, admin.password_hash):
+                        admin.password_hash = get_password_hash(admin_pwd)
+                        db.commit()
             finally:
                 db.close()
         except Exception as e:
