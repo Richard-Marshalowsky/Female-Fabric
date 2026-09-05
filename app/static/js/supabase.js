@@ -1,14 +1,17 @@
-// Supabase Client and Authentication Service for Female-Fabric
+﻿// Supabase Client and Authentication Service for Female-Fabric
 (function() {
-  const supabaseUrl = window.__SUPABASE_URL__|| 
+  const DEFAULT_SUPABASE_URL = 'https://ihoxwxdzrltvxamyhwsa.supabase.co';
+  const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlob3h3eGR6cmx0dnhhbXlod3NhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MDEyODcsImV4cCI6MjEwMzQ3NzI4N30.g6Ff_TT_UKbSDyG-b4IDVjXId3-5Nc-0vxpDsb7Vt-s';
+
+  const supabaseUrl = window.__SUPABASE_URL__ || 
                       document.querySelector('meta[name="supabase-url"]')?.content || 
                       localStorage.getItem('ff_supabase_url') || 
-                      '';
+                      DEFAULT_SUPABASE_URL;
 
   const supabaseAnonKey = window.__SUPABASE_ANON_KEY__ || 
                           document.querySelector('meta[name="supabase-anon-key"]')?.content || 
                           localStorage.getItem('ff_supabase_anon_key') || 
-                          '';
+                          DEFAULT_SUPABASE_ANON_KEY;
 
   let client = null;
 
@@ -26,14 +29,13 @@
           }
         });
         window.supabaseClient = client;
-        console.log('[Supabase] Client initialized');
+        console.log('[Supabase] Client initialized with project', finalUrl);
       } catch (e) {
         console.error('[Supabase] Initialization error:', e);
       }
     }
     return client;
   }
-
 
   if (window.supabase) {
     initClient();
@@ -46,7 +48,7 @@
   }
 
   window.SupabaseAuth = {
-    isConfigured: () => Boolean(client),
+    isConfigured: () => Boolean(client || (supabaseUrl && supabaseAnonKey)),
 
     getClient: () => client || initClient(),
 
