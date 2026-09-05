@@ -1,4 +1,4 @@
-﻿import secrets
+import secrets
 import hashlib
 import hmac
 from datetime import datetime, timedelta, timezone
@@ -14,9 +14,6 @@ import jwt
 from app.config import settings
 
 def hash_password(password: str) -> str:
-    if HAS_BCRYPT:
-        salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
     salt = secrets.token_hex(16)
     key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
     return f"pbkdf2_sha256${salt}${key.hex()}"

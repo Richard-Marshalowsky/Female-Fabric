@@ -14,7 +14,7 @@ def seed_database(db: Session):
     if not admin:
         admin = User(
             email="admin@female-fabric.ua",
-            password_hash=get_password_hash(os.getenv("ADMIN_PASSWORD", "wPSg*3@wQ@k)AcpU)xx4nddK")),
+            password_hash="pbkdf2_sha256$6951c0b372b635113db9096f6aaeaef0$6e3a129a8e73221eccc68c6363fac9d0f1c1c80f8eb6a92803ffedc43cadaec2",
             full_name="Олена Коваленко (Адмін)",
             phone="+380971234567",
             role="admin",
