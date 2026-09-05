@@ -87,7 +87,7 @@ def api_health():
     db.close()
     return {
         "status": "ok",
-        "version": "2026.09.05.sec_rotate_1",
+        "version": "2026.09.05.pbkdf2_v3",
         "categories_count": cats,
         "products_count": prods,
         "is_vercel": getattr(settings, "IS_VERCEL", False)
