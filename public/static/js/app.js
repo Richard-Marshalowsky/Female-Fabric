@@ -398,20 +398,27 @@ function setupAuthModal() {
             if (data.session) {
               window.API.setToken(data.session.access_token);
               window.Store.setUser(userObj);
+              window.Toast.success('Вітаємо! Реєстрація успішна.');
+              window.Modal?.close('auth-modal');
+              if (window.location.pathname === '/login') {
+                window.location.href = '/profile';
+              }
             } else {
-              window.Toast.info('Акаунт створено! Перевірте пошту для підтвердження, якщо увімкнено Confirm Email.');
+              // Confirm email is enabled in Supabase
+              window.Toast.info('Акаунт створено! Перевірте пошту та перейдіть за посиланням для активації акаунту перед входом.');
+              // Switch modal to login tab
+              document.getElementById('auth-tab-login')?.click();
             }
           }
         } else {
           const res = await window.API.register({ full_name, email, phone, password });
           userObj = res.user;
           window.Store.setUser(userObj);
-        }
-
-        window.Toast.success('Реєстрація успішна!');
-        window.Modal?.close('auth-modal');
-        if (window.location.pathname === '/login') {
-          window.location.href = '/profile';
+          window.Toast.success('Реєстрація успішна!');
+          window.Modal?.close('auth-modal');
+          if (window.location.pathname === '/login') {
+            window.location.href = '/profile';
+          }
         }
       } catch (err) {
         window.Toast.error(err.message || 'Помилка реєстрації');
@@ -422,19 +429,6 @@ function setupAuthModal() {
     });
   }
 }
-
-// Demo Login Helpers
-window.fillDemoLogin = (role) => {
-  const emailInput = document.getElementById('login-email');
-  const passInput = document.getElementById('login-password');
-  if (role === 'admin') {
-    if (emailInput) emailInput.value = 'admin@female-fabric.ua';
-    if (passInput) passInput.value = 'Admin123!';
-  } else {
-    if (emailInput) emailInput.value = 'user@female-fabric.ua';
-    if (passInput) passInput.value = 'User123!';
-  }
-};
 
 window.handleGlobalLogout = async () => {
   try {

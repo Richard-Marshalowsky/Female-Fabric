@@ -1,243 +1,334 @@
-// User Profile Page JavaScript
+﻿// User Profile Page JavaScript
 document.addEventListener('DOMContentLoaded', async () => {
+  // Give Store and Supabase a moment to initialize session
+  if (window.Store && !window.Store.user) {
+    if (window.SupabaseAuth && window.SupabaseAuth.isConfigured()) {
+      try {
+        const session = await window.SupabaseAuth.getSession();
+        if (session?.user) {
+          const u = session.user;
+          window.Store.setUser({
+            id: u.id,
+            email: u.email,
+            full_name: u.user_metadata?.full_name || u.email.split('@')[0],
+            phone: u.user_metadata?.phone || '',
+            role: 'customer'
+          });
+          window.API.setToken(session.access_token);
+        }
+      } catch(e) {}
+    }
+  }
+
   const token = window.API.getToken();
-  if (!token) {
+  const user = window.Store?.user;
+  if (!token && !user) {
     window.location.href = '/login';
     return;
   }
 
   await loadUserProfile();
   await loadUserOrders();
-  await loadUserAddresses();
   await loadUserFavorites();
-
-  setupProfileTabs();
-  setupProfileFormHandlers();
 });
 
-function setupProfileTabs() {
-  const tabs = document.querySelectorAll('.profile-tab-btn');
-  const panes = document.querySelectorAll('.profile-tab-pane');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active', 'border-black', 'text-black'));
-      panes.forEach(p => p.classList.add('hidden'));
-
-      tab.classList.add('active', 'border-black', 'text-black');
-      const targetPane = document.getElementById(tab.dataset.tab);
-      if (targetPane) targetPane.classList.remove('hidden');
-    });
+// Tab Switcher
+window.switchProfileTab = (tabName) => {
+  const tabs = ['orders', 'info', 'favorites'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tab-btn-${t}`);
+    const pane = document.getElementById(`profile-tab-${t}`);
+    if (btn) {
+      if (t === tabName) {
+        btn.classList.add('bg-neutral-900', 'text-white', 'font-semibold');
+        btn.classList.remove('text-neutral-600', 'hover:bg-[#F0EDE8]', 'font-medium');
+      } else {
+        btn.classList.remove('bg-neutral-900', 'text-white', 'font-semibold');
+        btn.classList.add('text-neutral-600', 'hover:bg-[#F0EDE8]', 'font-medium');
+      }
+    }
+    if (pane) {
+      if (t === tabName) {
+        pane.classList.remove('hidden');
+      } else {
+        pane.classList.add('hidden');
+      }
+    }
   });
-}
 
-async function loadUserProfile() {
-  try {
-    const user = await window.API.getProfile();
-    document.getElementById('profile-name-header').textContent = user.full_name;
-    document.getElementById('profile-email-header').textContent = user.email;
-
-    document.getElementById('edit-full-name').value = user.full_name;
-    document.getElementById('edit-email').value = user.email;
-    document.getElementById('edit-phone').value = user.phone || '';
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function loadUserOrders() {
-  const container = document.getElementById('profile-orders-list');
-  if (!container) return;
-
-  try {
-    const orders = await window.API.getOrders();
-    if (orders.length === 0) {
-      container.innerHTML = `
-        <div style="text-align:center; padding:40px; background:#FFF; border-radius:12px; border:1px solid #E5E0D8;">
-          <p style="color:#78716C; margin-bottom:16px;">У вас поки немає замовлень</p>
-          <a href="/catalog" class="btn btn-primary btn-sm">Перейти до покупок</a>
-        </div>
-      `;
-      return;
-    }
-
-    container.innerHTML = orders.map(order => {
-      let statusColor = '#2563EB';
-      if (order.status === 'Новый') statusColor = '#0284C7';
-      else if (order.status === 'Подтверждён') statusColor = '#0D9488';
-      else if (order.status === 'Собирается') statusColor = '#D97706';
-      else if (order.status === 'Отправлен') statusColor = '#7C3AED';
-      else if (order.status === 'Доставлен') statusColor = '#16A34A';
-      else if (order.status === 'Отменён') statusColor = '#DC2626';
-
-      const dateStr = new Date(order.created_at).toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
-
-      return `
-        <div style="background:#FFF; border-radius:12px; border:1px solid #E5E0D8; padding:20px; margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; border-bottom:1px solid #F0EDE8; padding-bottom:12px; flex-wrap:wrap; gap:8px;">
-            <div>
-              <div style="font-weight:700; font-size:1.125rem;">Замовлення ${order.order_number}</div>
-              <div style="font-size:0.813rem; color:#78716C;">від ${dateStr}</div>
-            </div>
-            <div style="text-align:right;">
-              <span style="background:${statusColor}15; color:${statusColor}; font-weight:600; font-size:0.813rem; padding:4px 10px; border-radius:6px; display:inline-block; margin-bottom:4px;">
-                ${order.status}
-              </span>
-              <div style="font-weight:700; font-size:1.063rem;">${window.Store.formatPrice(order.total_amount)}</div>
-            </div>
-          </div>
-
-          <div style="margin-bottom:16px;">
-            ${order.items.map(it => `
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.875rem;">
-                <div style="display:flex; gap:10px; align-items:center;">
-                  <img src="${window.optimizeImg ? window.optimizeImg(it.image_url, 120, 75) : (it.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=120&auto=format&fit=crop&q=75')}" alt="${it.product_name}" loading="lazy" decoding="async" style="width:36px; height:46px; object-fit:cover; border-radius:4px;">
-                  <div>
-                    <div style="font-weight:500;">${it.product_name}</div>
-                    <div style="color:#78716C; font-size:0.75rem;">${it.size || ''} | ${it.quantity} шт.</div>
-                  </div>
-                </div>
-                <div>${window.Store.formatPrice(it.total_price)}</div>
-              </div>
-            `).join('')}
-          </div>
-
-          <div style="font-size:0.813rem; color:#78716C; background:#FAF8F5; padding:10px 14px; border-radius:6px;">
-            <div><strong>Доставка:</strong> ${order.delivery_method} (${order.city}, ${order.address})</div>
-            <div><strong>Оплата:</strong> ${order.payment_method} (${order.payment_status})</div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function loadUserAddresses() {
-  const container = document.getElementById('profile-addresses-list');
-  if (!container) return;
-
-  try {
-    const addresses = await window.API.getAddresses();
-    if (addresses.length === 0) {
-      container.innerHTML = '<p style="color:#78716C;">У вас поки немає збережених адрес</p>';
-      return;
-    }
-
-    container.innerHTML = addresses.map(addr => `
-      <div style="background:#FFF; border-radius:12px; border:1px solid #E5E0D8; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div style="font-weight:600; display:flex; align-items:center; gap:8px;">
-            ${addr.title}
-            ${addr.is_default ? '<span style="font-size:0.688rem; background:#121212; color:#FFF; padding:2px 6px; border-radius:3px;">Основной</span>' : ''}
-          </div>
-          <div style="font-size:0.875rem; color:#57534E; margin-top:2px;">${addr.city}, ${addr.address}</div>
-        </div>
-        <button onclick="deleteAddress(${addr.id})" style="background:none; border:none; color:#DC2626; cursor:pointer; font-size:0.813rem; font-weight:500;">Удалить</button>
-      </div>
-    `).join('');
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-window.deleteAddress = async (id) => {
-  if (!confirm('Удалить этот адрес?')) return;
-  try {
-    await window.API.deleteAddress(id);
-    window.Toast.info('Адрес удален');
-    await loadUserAddresses();
-  } catch (err) {
-    window.Toast.error(err.message);
+  if (tabName === 'favorites') {
+    loadUserFavorites();
   }
 };
 
+// Load and populate user profile
+async function loadUserProfile() {
+  let currentUser = window.Store?.user;
+
+  // Try fetching fresh profile from API
+  try {
+    const apiUser = await window.API.getProfile();
+    if (apiUser) {
+      currentUser = { ...currentUser, ...apiUser };
+      window.Store?.setUser(currentUser);
+    }
+  } catch (e) {
+    // If backend 401 or offline, fallback to Supabase user
+    if (window.SupabaseAuth && window.SupabaseAuth.isConfigured()) {
+      try {
+        const sbUser = await window.SupabaseAuth.getUser();
+        if (sbUser) {
+          currentUser = {
+            id: sbUser.id,
+            email: sbUser.email,
+            full_name: sbUser.user_metadata?.full_name || sbUser.email.split('@')[0],
+            phone: sbUser.user_metadata?.phone || '',
+            role: 'customer'
+          };
+          window.Store?.setUser(currentUser);
+        }
+      } catch (err) {}
+    }
+  }
+
+  if (!currentUser) return;
+
+  const nameInput = document.getElementById('prof-name');
+  const emailInput = document.getElementById('prof-email');
+  const phoneInput = document.getElementById('prof-phone');
+  const welcomeText = document.getElementById('profile-welcome-text');
+
+  if (nameInput) nameInput.value = currentUser.full_name || '';
+  if (emailInput) emailInput.value = currentUser.email || '';
+  if (phoneInput) phoneInput.value = currentUser.phone || '';
+
+  if (welcomeText && currentUser.full_name) {
+    welcomeText.textContent = `Вітаємо, ${currentUser.full_name}! Раді бачити вас знову.`;
+  }
+}
+
+// Update profile info (Name, Phone)
+window.updateProfileInfo = async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button[type="submit"]');
+  const newName = document.getElementById('prof-name')?.value.trim();
+  const newPhone = document.getElementById('prof-phone')?.value.trim();
+
+  try {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Збереження...';
+    }
+
+    // 1. Update in Supabase Auth if configured
+    if (window.supabaseClient) {
+      const { data, error } = await window.supabaseClient.auth.updateUser({
+        data: {
+          full_name: newName,
+          phone: newPhone
+        }
+      });
+      if (error) throw error;
+    }
+
+    // 2. Update via Backend API if available
+    try {
+      await window.API.updateProfile({ full_name: newName, phone: newPhone });
+    } catch (apiErr) {
+      console.warn('Backend profile update note:', apiErr.message);
+    }
+
+    // 3. Update Store and Local State
+    const updatedUser = {
+      ...(window.Store?.user || {}),
+      full_name: newName,
+      phone: newPhone
+    };
+    window.Store?.setUser(updatedUser);
+
+    const welcomeText = document.getElementById('profile-welcome-text');
+    if (welcomeText && newName) {
+      welcomeText.textContent = `Вітаємо, ${newName}! Раді бачити вас знову.`;
+    }
+
+    window.Toast.success('Дані успішно оновлено!');
+  } catch (err) {
+    window.Toast.error(err.message || 'Помилка оновлення даних');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Зберегти зміни';
+    }
+  }
+};
+
+// Load and render user orders with total spent calculation
+async function loadUserOrders() {
+  const container = document.getElementById('profile-orders-list');
+  const emptyEl = document.getElementById('profile-orders-empty');
+  const countStatEl = document.getElementById('profile-stat-orders-count');
+  const totalStatEl = document.getElementById('profile-stat-total-spent');
+
+  if (!container) return;
+
+  let allOrders = [];
+  const currentUser = window.Store?.user;
+  const userEmail = (currentUser?.email || '').toLowerCase();
+
+  // 1. Fetch from Backend API
+  try {
+    const apiOrders = await window.API.getOrders();
+    if (Array.isArray(apiOrders)) {
+      allOrders = apiOrders;
+    }
+  } catch (e) {
+    console.warn('Backend orders fetch note:', e.message);
+  }
+
+  // 2. Merge with LocalStorage order history backup
+  if (userEmail) {
+    try {
+      const localOrders = JSON.parse(localStorage.getItem('ff_orders_' + userEmail) || '[]');
+      if (Array.isArray(localOrders) && localOrders.length > 0) {
+        const existingNums = new Set(allOrders.map(o => o.order_number));
+        localOrders.forEach(lo => {
+          if (!existingNums.has(lo.order_number)) {
+            allOrders.push(lo);
+          }
+        });
+      }
+    } catch(e) {}
+  }
+
+  // Calculate statistics (Total Orders & Total Spent)
+  const totalOrdersCount = allOrders.length;
+  const paidOrders = allOrders.filter(o => o.status !== 'Отменён' && o.status !== 'Скасовано');
+  const totalSpent = paidOrders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+
+  if (countStatEl) countStatEl.textContent = totalOrdersCount;
+  if (totalStatEl) totalStatEl.textContent = window.Store ? window.Store.formatPrice(totalSpent) : `${totalSpent} ₴`;
+
+  if (allOrders.length === 0) {
+    container.innerHTML = '';
+    if (emptyEl) emptyEl.classList.remove('hidden');
+    return;
+  }
+
+  if (emptyEl) emptyEl.classList.add('hidden');
+
+  // Format date helper
+  const formatDate = (dateStr) => {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch(e) {
+      return dateStr || '';
+    }
+  };
+
+  // Status badge colors
+  const getStatusBadge = (status) => {
+    const s = (status || 'Новий').toLowerCase();
+    if (s.includes('доставлен') || s.includes('виконан')) {
+      return '<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-200">Доставлено</span>';
+    }
+    if (s.includes('відправлен') || s.includes('отправлен')) {
+      return '<span class="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold border border-blue-200">Відправлено</span>';
+    }
+    if (s.includes('підтверд') || s.includes('подтвержд')) {
+      return '<span class="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">Підтверджено</span>';
+    }
+    if (s.includes('скас') || s.includes('отмен')) {
+      return '<span class="px-2.5 py-1 bg-rose-50 text-rose-700 rounded-full text-xs font-semibold border border-rose-200">Скасовано</span>';
+    }
+    return '<span class="px-2.5 py-1 bg-neutral-100 text-neutral-800 rounded-full text-xs font-semibold border border-neutral-200">В обробці</span>';
+  };
+
+  container.innerHTML = allOrders.map(order => `
+    <div class="bg-white rounded-xl border border-[#E7E2DA] p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#F0EDE8] pb-3">
+        <div>
+          <span class="font-mono font-semibold text-sm text-neutral-900">Замовлення #${order.order_number}</span>
+          <div class="text-xs text-neutral-500 mt-0.5">${formatDate(order.created_at)}</div>
+        </div>
+        <div class="flex items-center gap-3">
+          ${getStatusBadge(order.status)}
+          <span class="font-serif font-bold text-lg text-neutral-900">${window.Store ? window.Store.formatPrice(order.total_amount) : `${order.total_amount} ₴`}</span>
+        </div>
+      </div>
+
+      <!-- Items List -->
+      <div class="space-y-3 pt-1">
+        ${(order.items || []).map(it => `
+          <div class="flex items-center justify-between gap-4 text-xs">
+            <div class="flex items-center gap-3">
+              <img src="${window.optimizeImg ? window.optimizeImg(it.image_url, 120, 75) : (it.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=120&auto=format&fit=crop&q=75')}" alt="${it.product_name}" loading="lazy" decoding="async" class="w-12 h-14 object-cover rounded-md border border-[#E7E2DA]">
+              <div>
+                <div class="font-medium text-neutral-900 text-sm">${it.product_name}</div>
+                <div class="text-neutral-500 mt-0.5">
+                  ${it.sku ? `<span class="text-neutral-400">Арт: ${it.sku}</span> • ` : ''}
+                  ${it.size ? `Розмір: <strong>${it.size}</strong>` : ''}
+                  ${it.color ? ` • Колір: ${it.color}` : ''} • ${it.quantity} шт.
+                </div>
+              </div>
+            </div>
+            <div class="font-semibold text-neutral-900">${window.Store ? window.Store.formatPrice(it.total_price || (it.price * it.quantity)) : `${it.price} ₴`}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Delivery & Payment Info -->
+      <div class="pt-3 border-t border-[#F0EDE8] flex flex-wrap justify-between text-xs text-neutral-500 gap-2">
+        <div><strong>Доставка:</strong> ${order.delivery_method || 'Нова Пошта'} ${order.city ? `(${order.city}, ${order.address})` : ''}</div>
+        <div><strong>Оплата:</strong> ${order.payment_method || 'Карткою онлайн'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Load and render user favorites
 async function loadUserFavorites() {
-  const container = document.getElementById('profile-favorites-list');
+  const container = document.getElementById('profile-fav-grid');
+  const emptyEl = document.getElementById('profile-fav-empty');
   if (!container) return;
 
   try {
-    const favs = await window.API.getFavorites();
-    if (favs.length === 0) {
-      container.innerHTML = '<p style="color:#78716C; text-align:center; padding:30px;">В избранном пока нет товаров</p>';
+    const products = await window.Store?.getFavoriteProducts();
+    if (!products || products.length === 0) {
+      container.innerHTML = '';
+      if (emptyEl) emptyEl.classList.remove('hidden');
       return;
     }
 
-    container.innerHTML = favs.map(p => `
-      <div class="product-card" style="background:#FFF; border-radius:12px; overflow:hidden; border:1px solid #E5E0D8; display:flex; flex-direction:column; position:relative;">
-        <button onclick="window.Store.toggleFavorite(${p.id}).then(() => loadUserFavorites())" style="position:absolute; top:10px; right:10px; z-index:10; background:#FFF; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.1);">✕</button>
-        <a href="/product/${p.slug}" style="display:block; height:240px; overflow:hidden; background:#F3EFEA;">
-          <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 500, 75) : p.primary_image}" alt="${p.name}" class="img-zoom" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;">
+    if (emptyEl) emptyEl.classList.add('hidden');
+
+    container.innerHTML = products.map(p => `
+      <div class="product-card bg-white rounded-xl border border-[#E7E2DA] overflow-hidden flex flex-col relative">
+        <button onclick="window.Store.toggleFavorite(${p.id}).then(() => loadUserFavorites())" class="absolute top-2 right-2 bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-xs shadow-sm hover:bg-white z-10" title="Видалити">✕</button>
+        <a href="/product/${p.slug}" class="block h-48 overflow-hidden bg-[#FAF8F5]">
+          <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 400, 75) : p.primary_image}" alt="${p.name}" loading="lazy" decoding="async" class="w-full h-full object-cover">
         </a>
-        <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="p-3 flex-1 flex flex-col justify-between">
           <div>
-            <a href="/product/${p.slug}" style="font-size:0.938rem; font-weight:500; color:#121212; display:block; margin-bottom:6px;">${p.name}</a>
-            <div style="font-weight:700; font-size:1rem; margin-bottom:10px;">${window.Store.formatPrice(p.price)}</div>
+            <a href="/product/${p.slug}" class="font-medium text-xs text-neutral-900 block mb-1 line-clamp-1 hover:underline">${p.name}</a>
+            <div class="font-bold text-sm text-neutral-900 mb-2">${window.Store ? window.Store.formatPrice(p.price) : `${p.price} ₴`}</div>
           </div>
-          <a href="/product/${p.slug}" class="btn btn-primary btn-sm" style="width:100%;">Купить</a>
+          <a href="/product/${p.slug}" class="btn btn-primary btn-sm w-full py-1.5 text-xs text-center block">Купити</a>
         </div>
       </div>
     `).join('');
-  } catch (e) {
-    console.error(e);
+  } catch(e) {
+    console.error('Favorites load error:', e);
   }
 }
 
-function setupProfileFormHandlers() {
-  const profileForm = document.getElementById('profile-edit-form');
-  if (profileForm) {
-    profileForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const full_name = document.getElementById('edit-full-name').value.trim();
-      const phone = document.getElementById('edit-phone').value.trim();
-      const email = document.getElementById('edit-email').value.trim();
-
-      try {
-        const updated = await window.API.updateProfile({ full_name, phone, email });
-        window.Store.setUser(updated);
-        window.Toast.success('Данные сохранены');
-      } catch (err) {
-        window.Toast.error(err.message || 'Ошибка обновления данных');
-      }
-    });
+// Global logout helper for profile page
+window.logoutUser = async () => {
+  if (window.SupabaseAuth) {
+    await window.SupabaseAuth.signOut();
   }
-
-  const passForm = document.getElementById('profile-password-form');
-  if (passForm) {
-    passForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const old_password = document.getElementById('old-password').value;
-      const new_password = document.getElementById('new-password').value;
-
-      try {
-        await window.API.changePassword(old_password, new_password);
-        window.Toast.success('Пароль успешно изменен');
-        passForm.reset();
-      } catch (err) {
-        window.Toast.error(err.message || 'Ошибка смены пароля');
-      }
-    });
-  }
-
-  const addrForm = document.getElementById('add-address-form');
-  if (addrForm) {
-    addrForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = document.getElementById('addr-title').value.trim();
-      const city = document.getElementById('addr-city').value.trim();
-      const address = document.getElementById('addr-street').value.trim();
-      const is_default = document.getElementById('addr-default').checked;
-
-      try {
-        await window.API.addAddress({ title, city, address, is_default });
-        window.Toast.success('Адрес успешно добавлен');
-        addrForm.reset();
-        window.Modal?.close('add-address-modal');
-        await loadUserAddresses();
-      } catch (err) {
-        window.Toast.error(err.message || 'Ошибка добавления адреса');
-      }
-    });
-  }
-}
+  window.API.setToken(null);
+  window.Store?.setUser(null);
+  window.location.href = '/';
+};

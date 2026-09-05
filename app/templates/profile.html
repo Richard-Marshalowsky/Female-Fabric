@@ -80,7 +80,10 @@
   <main class="flex-1 py-10">
     <div class="container mx-auto px-4 max-w-5xl">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <h1 class="font-serif text-3xl md:text-4xl" data-i18n="profile_title">Особистий кабінет</h1>
+        <div>
+          <h1 class="font-serif text-3xl md:text-4xl" data-i18n="profile_title">Особистий кабінет</h1>
+          <p id="profile-welcome-text" class="text-xs text-neutral-500 mt-1">Раді бачити вас знову</p>
+        </div>
         <button onclick="logoutUser()" class="text-xs text-rose-600 hover:underline font-medium self-start sm:self-auto" data-i18n="profile_logout">Вийти з акаунту</button>
       </div>
 
@@ -97,9 +100,34 @@
           
           <!-- Orders Tab -->
           <div id="profile-tab-orders" class="bg-white p-6 md:p-8 rounded-2xl border border-[#E7E2DA] space-y-6">
-            <h3 class="font-semibold text-lg border-b border-[#F0EDE8] pb-4" data-i18n="profile_tab_orders">Мої замовлення</h3>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#F0EDE8] pb-4 gap-2">
+              <h3 class="font-semibold text-lg" data-i18n="profile_tab_orders">Мої замовлення</h3>
+              <span class="text-xs text-neutral-500">Історія всіх ваших покупок</span>
+            </div>
+
+            <!-- Summary Statistics Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div class="bg-[#FAF8F5] p-4 rounded-xl border border-[#E7E2DA]">
+                <span class="text-xs text-neutral-500 uppercase tracking-wider block mb-1">Усього замовлень</span>
+                <span id="profile-stat-orders-count" class="text-2xl font-serif font-semibold text-neutral-900">0</span>
+              </div>
+              <div class="bg-[#FAF8F5] p-4 rounded-xl border border-[#E7E2DA]">
+                <span class="text-xs text-neutral-500 uppercase tracking-wider block mb-1">Витрачено за весь час</span>
+                <span id="profile-stat-total-spent" class="text-2xl font-serif font-semibold text-neutral-900">0 ₴</span>
+              </div>
+              <div class="bg-[#FAF8F5] p-4 rounded-xl border border-[#E7E2DA] col-span-2 sm:col-span-1">
+                <span class="text-xs text-neutral-500 uppercase tracking-wider block mb-1">Статус клієнта</span>
+                <span class="text-sm font-semibold text-neutral-900 flex items-center gap-1.5 mt-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Постійний клієнт
+                </span>
+              </div>
+            </div>
+
             <div id="profile-orders-list" class="space-y-4"></div>
-            <div id="profile-orders-empty" class="hidden text-center py-8 text-neutral-400 text-sm" data-i18n="profile_no_orders">У вас поки що немає оформлених замовлень</div>
+            <div id="profile-orders-empty" class="hidden text-center py-10 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA] text-neutral-500 text-sm">
+              <p class="mb-4">У вас поки що немає оформлених замовлень</p>
+              <a href="/catalog" class="btn btn-primary btn-sm px-6 py-2.5">Перейти до каталогу</a>
+            </div>
           </div>
 
           <!-- Info Tab -->
@@ -288,15 +316,6 @@
       <div class="flex border-b border-[#E7E2DA] mb-6">
         <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 text-neutral-900 transition" data-i18n="auth_login_title">Вхід</button>
         <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-900 transition" data-i18n="auth_register_title">Реєстрація</button>
-      </div>
-
-      <!-- Quick Demo Login Bar -->
-      <div class="bg-[#FAF8F5] p-3 rounded-lg border border-[#E7E2DA] mb-5 flex items-center justify-between text-xs">
-        <span class="text-neutral-500 font-medium">Швидкий демо-вхід:</span>
-        <div class="flex gap-2">
-          <button type="button" onclick="window.fillDemoLogin('customer')" class="px-2.5 py-1 bg-white border border-[#E7E2DA] rounded font-semibold text-neutral-800 hover:bg-neutral-100 shadow-sm transition">Клієнт</button>
-          <button type="button" onclick="window.fillDemoLogin('admin')" class="px-2.5 py-1 bg-neutral-900 text-white rounded font-semibold hover:bg-neutral-800 shadow-sm transition">Адмін</button>
-        </div>
       </div>
 
       <!-- Login Form -->

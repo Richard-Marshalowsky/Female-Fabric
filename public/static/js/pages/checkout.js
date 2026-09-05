@@ -143,7 +143,36 @@ async function handleCheckoutSubmit(e) {
     submitBtn.textContent = 'Оформление заказа...';
 
     const res = await window.API.createOrder(orderData);
-    try { localStorage.removeItem('ff_cart_backup'); } catch(e){}
+    try {
+      const userEmail = orderData.email.toLowerCase();
+      const existing = JSON.parse(localStorage.getItem('ff_orders_' + userEmail) || '[]');
+      const orderRecord = {
+        order_number: res.order_number,
+        created_at: new Date().toISOString(),
+        status: 'Новий',
+        total_amount: res.total_amount,
+        subtotal_amount: res.subtotal_amount,
+        delivery_fee: res.delivery_fee,
+        discount_amount: res.discount_amount || 0,
+        delivery_method: orderData.delivery_method,
+        payment_method: orderData.payment_method,
+        city: orderData.city,
+        address: orderData.address,
+        items: (window.Store.cart?.items || []).map(it => ({
+          product_name: it.product_name,
+          sku: it.sku || '',
+          size: it.size,
+          color: it.color,
+          quantity: it.quantity,
+          price: it.price,
+          total_price: it.total_price || (it.price * it.quantity),
+          image_url: it.image_url
+        }))
+      };
+      existing.unshift(orderRecord);
+      localStorage.setItem('ff_orders_' + userEmail, JSON.stringify(existing));
+      localStorage.removeItem('ff_cart_backup');
+    } catch(e){}
     await window.Store.refreshCart();
     window.location.href = `/order-success?order_number=${res.order_number}`;
   } catch (err) {
