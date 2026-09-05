@@ -423,7 +423,7 @@ function setupAuthModal() {
 }
 
 // Demo Login Helpers
-window.fillDemoLogin = (role) => {
+
   const emailInput = document.getElementById('login-email');
   const passInput = document.getElementById('login-password');
   if (role === 'admin') {
@@ -535,15 +535,6 @@ SPACIOUS_AUTH_AND_WISHLIST_MODALS = """
       <div class="flex border-b border-[#E7E2DA] mb-6">
         <button id="auth-tab-login" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-neutral-900 text-neutral-900 transition" data-i18n="auth_login_title">Вхід</button>
         <button id="auth-tab-register" class="flex-1 py-3 text-center text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-900 transition" data-i18n="auth_register_title">Реєстрація</button>
-      </div>
-
-      <!-- Quick Demo Login Bar -->
-      <div class="bg-[#FAF8F5] p-3 rounded-lg border border-[#E7E2DA] mb-5 flex items-center justify-between text-xs">
-        <span class="text-neutral-500 font-medium">Швидкий демо-вхід:</span>
-        <div class="flex gap-2">
-          <button type="button" onclick="window.fillDemoLogin('customer')" class="px-2.5 py-1 bg-white border border-[#E7E2DA] rounded font-semibold text-neutral-800 hover:bg-neutral-100 shadow-sm transition">Клієнт</button>
-          <button type="button" onclick="window.fillDemoLogin('admin')" class="px-2.5 py-1 bg-neutral-900 text-white rounded font-semibold hover:bg-neutral-800 shadow-sm transition">Адмін</button>
-        </div>
       </div>
 
       <!-- Login Form -->

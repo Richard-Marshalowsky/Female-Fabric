@@ -45,6 +45,7 @@ class Settings:
     PROJECT_NAME: str = 'Female-Fabric'
     PROJECT_DESCRIPTION: str = 'Інтернет-магазин сучасної жіночої одежды Female-Fabric'
     VERSION: str = '1.0.0'
+    IS_VERCEL: bool = IS_VERCEL
     
     SECRET_KEY: str = os.getenv('SECRET_KEY', 'female-fabric-super-secure-secret-key-2026-xyz987')
     ALGORITHM: str = 'HS256'

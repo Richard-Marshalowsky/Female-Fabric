@@ -54,12 +54,12 @@ except Exception:
     pass
 
 def get_template_html(filename: str) -> str:
-    template_path = settings.TEMPLATES_DIR / filename
-    if template_path.is_file():
-        return template_path.read_text(encoding="utf-8")
     public_path = settings.PUBLIC_DIR / filename
     if public_path.is_file():
         return public_path.read_text(encoding="utf-8")
+    template_path = settings.TEMPLATES_DIR / filename
+    if template_path.is_file():
+        return template_path.read_text(encoding="utf-8")
     return f"<!DOCTYPE html><html><body><h1>{filename} not found</h1></body></html>"
 
 # Include API Routers
@@ -85,12 +85,19 @@ def api_health():
     cats = db.query(Category).count()
     prods = db.query(Product).count()
     db.close()
+    import os
     return {
         "status": "ok",
-        "version": "2026.09.05.pbkdf2_v3",
+        "version": "2026.09.05.pbkdf2_v4",
         "categories_count": cats,
         "products_count": prods,
-        "is_vercel": getattr(settings, "IS_VERCEL", False)
+        "is_vercel": getattr(settings, "IS_VERCEL", False),
+        "env_diagnostics": {
+            "VERCEL": os.getenv("VERCEL"),
+            "VERCEL_ENV": os.getenv("VERCEL_ENV"),
+            "VERCEL_URL": os.getenv("VERCEL_URL"),
+            "AWS_LAMBDA": os.getenv("AWS_LAMBDA_FUNCTION_NAME") is not None
+        }
     }
 
 # Auto-initialize database tables and seed data
