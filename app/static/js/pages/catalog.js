@@ -128,7 +128,7 @@ async function loadCatalogProducts() {
         </div>
 
         <a href="/product/${p.slug}" style="display:block; height:330px; position:relative; overflow:hidden; background:#F3EFEA;">
-          <img src="${p.primary_image}" alt="${p.name}" class="img-zoom" style="width:100%; height:100%; object-fit:cover;">
+          <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 500, 75) : p.primary_image}" alt="${p.name}" class="img-zoom" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;">
         </a>
 
         <div style="padding:16px; display:flex; flex-direction:column; flex:1; justify-content:space-between;">

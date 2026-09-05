@@ -69,7 +69,7 @@ function renderCheckoutSummary(cart) {
     itemsContainer.innerHTML = cart.items.map(item => `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:0.875rem;">
         <div style="display:flex; gap:10px; align-items:center; max-width:70%;">
-          <img src="${item.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200'}" style="width:40px; height:50px; object-fit:cover; border-radius:4px;">
+          <img src="${window.optimizeImg ? window.optimizeImg(item.image_url, 120, 75) : (item.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=120&auto=format&fit=crop&q=75')}" alt="${item.product_name}" loading="lazy" decoding="async" style="width:40px; height:50px; object-fit:cover; border-radius:4px;">
           <div>
             <div style="font-weight:500; line-height:1.2;">${item.product_name}</div>
             <div style="color:#78716C; font-size:0.75rem;">${item.sku ? `<span style="color:#78716C; font-weight:500;">Арт: ${item.sku}</span> • ` : ''}${item.size ? `Розмір: ${item.size}` : ''}${item.color ? ` • ${item.color}` : ''} • ${item.quantity} шт.</div>

@@ -1,4 +1,4 @@
-﻿// User Profile Page JavaScript
+// User Profile Page JavaScript
 document.addEventListener('DOMContentLoaded', async () => {
   const token = window.API.getToken();
   if (!token) {
@@ -91,7 +91,7 @@ async function loadUserOrders() {
             ${order.items.map(it => `
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.875rem;">
                 <div style="display:flex; gap:10px; align-items:center;">
-                  <img src="${it.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200'}" style="width:36px; height:46px; object-fit:cover; border-radius:4px;">
+                  <img src="${window.optimizeImg ? window.optimizeImg(it.image_url, 120, 75) : (it.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=120&auto=format&fit=crop&q=75')}" alt="${it.product_name}" loading="lazy" decoding="async" style="width:36px; height:46px; object-fit:cover; border-radius:4px;">
                   <div>
                     <div style="font-weight:500;">${it.product_name}</div>
                     <div style="color:#78716C; font-size:0.75rem;">${it.size || ''} | ${it.quantity} шт.</div>
@@ -168,7 +168,7 @@ async function loadUserFavorites() {
       <div class="product-card" style="background:#FFF; border-radius:12px; overflow:hidden; border:1px solid #E5E0D8; display:flex; flex-direction:column; position:relative;">
         <button onclick="window.Store.toggleFavorite(${p.id}).then(() => loadUserFavorites())" style="position:absolute; top:10px; right:10px; z-index:10; background:#FFF; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.1);">✕</button>
         <a href="/product/${p.slug}" style="display:block; height:240px; overflow:hidden; background:#F3EFEA;">
-          <img src="${p.primary_image}" alt="${p.name}" class="img-zoom" style="width:100%; height:100%; object-fit:cover;">
+          <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 500, 75) : p.primary_image}" alt="${p.name}" class="img-zoom" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;">
         </a>
         <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
           <div>

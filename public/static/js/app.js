@@ -129,7 +129,7 @@ function renderCartDrawer(cart) {
 
   container.innerHTML = cart.items.map(item => `
     <div class="cart-item-row" style="display:flex; gap:12px; padding:12px 0; border-bottom:1px solid #F0EDE8;">
-      <img src="${item.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300'}" alt="${item.product_name}" style="width:70px; height:90px; object-fit:cover; border-radius:4px;">
+      <img src="${window.optimizeImg ? window.optimizeImg(item.image_url, 160, 75) : (item.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=160&auto=format&fit=crop&q=75')}" alt="${item.product_name}" loading="lazy" decoding="async" style="width:70px; height:90px; object-fit:cover; border-radius:4px;">
       <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -198,7 +198,7 @@ async function renderWishlistDrawer() {
   container.innerHTML = products.map(p => `
     <div style="display:flex; gap:12px; padding:12px 0; border-bottom:1px solid #F0EDE8; align-items:center;">
       <a href="/product/${p.slug}">
-        <img src="${p.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200'}" alt="${p.name}" style="width:60px; height:75px; object-fit:cover; border-radius:6px;">
+        <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 160, 75) : (p.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=160&auto=format&fit=crop&q=75')}" alt="${p.name}" loading="lazy" decoding="async" style="width:60px; height:75px; object-fit:cover; border-radius:6px;">
       </a>
       <div style="flex:1;">
         <a href="/product/${p.slug}" style="font-weight:500; font-size:0.875rem; color:#121212; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</a>
@@ -251,7 +251,7 @@ function setupLiveSearch() {
               <div style="padding:8px 12px; font-size:0.75rem; text-transform:uppercase; color:#A8A29E; font-weight:600;">Знайдено товарів (${res.total})</div>
               ${res.items.map(p => `
                 <a href="/product/${p.slug}" style="display:flex; gap:12px; align-items:center; padding:8px 12px; border-bottom:1px solid #F7F5F0; transition:background 0.2s;" onmouseover="this.style.background='#F7F5F0'" onmouseout="this.style.background='transparent'">
-                  <img src="${p.primary_image}" alt="${p.name}" style="width:40px; height:50px; object-fit:cover; border-radius:4px;">
+                  <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 100, 75) : p.primary_image}" alt="${p.name}" loading="lazy" decoding="async" style="width:40px; height:50px; object-fit:cover; border-radius:4px;">
                   <div style="flex:1;">
                     <div style="font-size:0.875rem; font-weight:500; color:#121212;">${p.name}</div>
                     <div style="font-size:0.813rem; color:#78716C;">${p.category_name || ''}</div>

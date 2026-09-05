@@ -48,14 +48,14 @@ def seed_database(db: Session):
 
     # 3. Categories
     categories_data = [
-        {"name": "Сукні та шовк", "slug": "dresses", "image_url": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80", "sort_order": 1},
-        {"name": "Блузи та сорочки", "slug": "blouses", "image_url": "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=800&q=80", "sort_order": 2},
-        {"name": "Костюми та жакети", "slug": "suits", "image_url": "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?w=800&q=80", "sort_order": 3},
-        {"name": "Штани та джинси", "slug": "trousers", "image_url": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80", "sort_order": 4},
-        {"name": "Верхній одяг", "slug": "outerwear", "image_url": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=800&q=80", "sort_order": 5},
-        {"name": "Спідниці", "slug": "skirts", "image_url": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=800&q=80", "sort_order": 6},
-        {"name": "Трикотаж та светри", "slug": "knitwear", "image_url": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&q=80", "sort_order": 7},
-        {"name": "Аксесуари", "slug": "accessories", "image_url": "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=800&q=80", "sort_order": 8},
+        {"name": "Сукні та шовк", "slug": "dresses", "image_url": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=75", "sort_order": 1},
+        {"name": "Блузи та сорочки", "slug": "blouses", "image_url": "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=800&auto=format&fit=crop&q=75", "sort_order": 2},
+        {"name": "Костюми та жакети", "slug": "suits", "image_url": "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?w=800&auto=format&fit=crop&q=75", "sort_order": 3},
+        {"name": "Штани та джинси", "slug": "trousers", "image_url": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=75", "sort_order": 4},
+        {"name": "Верхній одяг", "slug": "outerwear", "image_url": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=800&auto=format&fit=crop&q=75", "sort_order": 5},
+        {"name": "Спідниці", "slug": "skirts", "image_url": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=800&auto=format&fit=crop&q=75", "sort_order": 6},
+        {"name": "Трикотаж та светри", "slug": "knitwear", "image_url": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&auto=format&fit=crop&q=75", "sort_order": 7},
+        {"name": "Аксесуари", "slug": "accessories", "image_url": "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=800&auto=format&fit=crop&q=75", "sort_order": 8},
     ]
 
     category_map = {}
@@ -92,8 +92,8 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=1000&q=80",
-                "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=1000&q=80"
+                "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=1000&auto=format&fit=crop&q=75",
+                "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Чорний", "code": "#000000"}, {"name": "Нюд", "code": "#E3C2B0"}],
             "sizes": ["XS", "S", "M", "L"]
@@ -110,8 +110,8 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?w=1000&q=80",
-                "https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1000&q=80"
+                "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?w=1000&auto=format&fit=crop&q=75",
+                "https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Бежевий", "code": "#C5A880"}, {"name": "Чорний", "code": "#000000"}],
             "sizes": ["S", "M", "L"]
@@ -128,7 +128,7 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": False,
             "images": [
-                "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=1000&q=80"
+                "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Молочний", "code": "#FAF8F5"}, {"name": "Шампань", "code": "#F7E7CE"}],
             "sizes": ["XS", "S", "M", "L"]
@@ -145,7 +145,7 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=1000&q=80"
+                "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Кемел", "code": "#C19A6B"}, {"name": "Графіт", "code": "#383838"}],
             "sizes": ["S", "M", "L"]
@@ -162,7 +162,7 @@ def seed_database(db: Session):
             "is_featured": False,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1000&q=80"
+                "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Чорний", "code": "#000000"}, {"name": "Молочний", "code": "#FAF8F5"}],
             "sizes": ["XS", "S", "M", "L"]
@@ -179,7 +179,7 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": False,
             "images": [
-                "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=1000&q=80"
+                "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Бежевий", "code": "#D2B48C"}, {"name": "Сірий", "code": "#808080"}],
             "sizes": ["S", "M", "L"]
@@ -196,7 +196,7 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=1000&q=80"
+                "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Шампань", "code": "#F7E7CE"}, {"name": "Чорний", "code": "#000000"}],
             "sizes": ["XS", "S", "M", "L"]
@@ -213,8 +213,8 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": False,
             "images": [
-                "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1000&q=80",
-                "https://images.unsplash.com/photo-1548624149-f9b1859aa9d0?w=1000&q=80"
+                "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1000&auto=format&fit=crop&q=75",
+                "https://images.unsplash.com/photo-1548624149-f9b1859aa9d0?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Графіт", "code": "#383838"}, {"name": "Темно-синій", "code": "#1B263B"}],
             "sizes": ["S", "M", "L"]
@@ -231,7 +231,7 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1544923246-77307dd654cb?w=1000&q=80"
+                "https://images.unsplash.com/photo-1544923246-77307dd654cb?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Бежевий", "code": "#C5A880"}, {"name": "Олива", "code": "#556B2F"}],
             "sizes": ["S", "M", "L"]
@@ -248,7 +248,7 @@ def seed_database(db: Session):
             "is_featured": False,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=1000&q=80"
+                "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Золотисто-бежевий", "code": "#D4AF37"}, {"name": "Смарагдовий", "code": "#50C878"}],
             "sizes": ["One Size"]
@@ -265,7 +265,7 @@ def seed_database(db: Session):
             "is_featured": False,
             "is_new": True,
             "images": [
-                "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=1000&q=80"
+                "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Білий", "code": "#FFFFFF"}, {"name": "Блакитний", "code": "#A0C4FF"}],
             "sizes": ["XS", "S", "M", "L"]
@@ -282,7 +282,7 @@ def seed_database(db: Session):
             "is_featured": True,
             "is_new": False,
             "images": [
-                "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1000&q=80"
+                "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1000&auto=format&fit=crop&q=75"
             ],
             "colors": [{"name": "Молочний", "code": "#FAF8F5"}, {"name": "Пісочний", "code": "#D2B48C"}],
             "sizes": ["S", "M", "L"]

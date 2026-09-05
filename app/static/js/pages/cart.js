@@ -1,4 +1,4 @@
-﻿// Cart Page JavaScript
+// Cart Page JavaScript
 document.addEventListener('DOMContentLoaded', () => {
   renderCartPage(window.Store.cart);
   window.Store.on('cart:updated', (cart) => {
@@ -53,7 +53,7 @@ function renderCartPage(cart) {
   if (itemsContainer) {
     itemsContainer.innerHTML = cart.items.map(item => `
       <div style="display:flex; gap:16px; padding:20px; border-bottom:1px solid #E5E0D8; background:#FFF; border-radius:8px; margin-bottom:12px;">
-        <img src="${item.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300'}" alt="${item.product_name}" style="width:90px; height:120px; object-fit:cover; border-radius:6px;">
+        <img src="${window.optimizeImg ? window.optimizeImg(item.image_url, 180, 75) : (item.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=180&auto=format&fit=crop&q=75')}" alt="${item.product_name}" loading="lazy" decoding="async" style="width:90px; height:120px; object-fit:cover; border-radius:6px;">
         <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>

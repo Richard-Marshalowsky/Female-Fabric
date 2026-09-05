@@ -1,4 +1,21 @@
 // Centralized API Client for Female-Fabric
+window.optimizeImg = function(url, width = 500, quality = 75) {
+  if (!url || typeof url !== 'string') return url || '';
+  if (url.includes('images.unsplash.com')) {
+    try {
+      const u = new URL(url);
+      u.searchParams.set('w', width);
+      u.searchParams.set('q', quality);
+      u.searchParams.set('auto', 'format');
+      u.searchParams.set('fit', 'crop');
+      return u.toString();
+    } catch (e) {
+      return url;
+    }
+  }
+  return url;
+};
+
 class ApiClient {
   constructor() {
     this.baseUrl = '';

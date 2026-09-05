@@ -17,7 +17,7 @@ async function loadHomeCategories() {
     }
     container.innerHTML = categories.map(cat => `
       <a href="/catalog?category=${cat.slug}" class="category-card" style="position:relative; overflow:hidden; border-radius:12px; height:260px; display:block; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-        <img src="${cat.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800'}" alt="${cat.name}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);" class="category-img">
+        <img src="${window.optimizeImg ? window.optimizeImg(cat.image_url, 600, 75) : (cat.image_url || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&auto=format&fit=crop&q=75')}" alt="${cat.name}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; transition:transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);" class="category-img">
         <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);"></div>
         <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; color:#FFF;">
           <h3 style="font-size:1.375rem; font-weight:500; font-family:Georgia,serif; margin-bottom:4px;">${window.I18N ? window.I18N.t('cat_' + cat.slug) || cat.name : cat.name}</h3>
@@ -92,7 +92,7 @@ function renderProductGrid(container, products) {
       </div>
 
       <a href="/product/${p.slug}" style="display:block; height:320px; position:relative; overflow:hidden; background:#F3EFEA;">
-        <img src="${p.primary_image || 'https://images.unsplash.com/photo-1544923246-77307dd654cb?w=600'}" alt="${p.name}" class="img-zoom" style="width:100%; height:100%; object-fit:cover; transition:transform 0.6s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 500, 75) : (p.primary_image || 'https://images.unsplash.com/photo-1544923246-77307dd654cb?w=500&auto=format&fit=crop&q=75')}" alt="${p.name}" class="img-zoom" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; transition:transform 0.6s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
       </a>
 
       <div style="padding:16px; display:flex; flex-direction:column; flex:1; justify-content:space-between;">

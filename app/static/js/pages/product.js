@@ -124,7 +124,8 @@ function renderProductGallery(product) {
   const images = (product.images && product.images.length > 0) ? product.images : [product.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800'];
 
   if (mainImg) {
-    mainImg.src = images[0];
+    mainImg.src = window.optimizeImg ? window.optimizeImg(images[0], 900, 80) : images[0];
+    mainImg.decoding = 'async';
     mainImg.alt = product.name;
   }
 
@@ -132,7 +133,7 @@ function renderProductGallery(product) {
     if (images.length > 1) {
       thumbsContainer.innerHTML = images.map((imgUrl, idx) => `
         <button type="button" onclick="window.switchMainProductImage('${imgUrl}', this)" class="product-thumb-btn ${idx === 0 ? 'border-neutral-900' : 'border-transparent'}" style="width:64px; height:80px; border-radius:6px; overflow:hidden; border-width:2px; flex-shrink:0; cursor:pointer; background:#FAF8F5; padding:0;">
-          <img src="${imgUrl}" alt="Thumbnail ${idx}" style="width:100%; height:100%; object-fit:cover;">
+          <img src="${window.optimizeImg ? window.optimizeImg(imgUrl, 160, 75) : imgUrl}" alt="Thumbnail ${idx}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;">
         </button>
       `).join('');
     } else {
@@ -143,7 +144,7 @@ function renderProductGallery(product) {
 
 window.switchMainProductImage = (url, btn) => {
   const mainImg = document.getElementById('product-main-img') || document.getElementById('product-main-image');
-  if (mainImg) mainImg.src = url;
+  if (mainImg) mainImg.src = window.optimizeImg ? window.optimizeImg(url, 900, 80) : url;
   document.querySelectorAll('.product-thumb-btn').forEach(b => {
     b.classList.remove('border-neutral-900');
     b.classList.add('border-transparent');
@@ -299,7 +300,7 @@ async function loadSimilarProducts(product) {
     container.innerHTML = items.map(p => `
       <div class="product-card" style="background:#FFF; border-radius:12px; overflow:hidden; border:1px solid #E7E2DA; display:flex; flex-direction:column;">
         <a href="/product/${p.slug}" style="display:block; height:240px; position:relative; overflow:hidden; background:#FAF8F5;">
-          <img src="${p.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500'}" alt="${p.name}" class="img-zoom" style="width:100%; height:100%; object-fit:cover;">
+          <img src="${window.optimizeImg ? window.optimizeImg(p.primary_image, 500, 75) : (p.primary_image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=75')}" alt="${p.name}" class="img-zoom" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;">
         </a>
         <div style="padding:14px; display:flex; flex-direction:column; flex:1; justify-content:space-between;">
           <a href="/product/${p.slug}" style="font-size:0.875rem; font-weight:500; color:#121212; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</a>
