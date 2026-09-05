@@ -86,7 +86,7 @@ npx wrangler deploy
 1. Откройте URL вашего Worker (например, `https://female-fabric.workers.dev`)
 2. Попробуйте зарегистрироваться или войти с тестовыми данными:
    - Email: `admin@female-fabric.ru`
-   - Пароль: `Admin123!`
+   - Пароль: `[SECURE_ADMIN_PASSWORD]`
 
 ## Troubleshooting
 

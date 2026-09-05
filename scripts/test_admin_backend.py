@@ -17,7 +17,7 @@ def test_admin_real_persistence():
     # 1. Login as Admin
     login_res = client.post("/api/auth/login", json={
         "email": "admin@female-fabric.ua",
-        "password": "Admin123!"
+        "password": "wPSg*3@wQ@k)AcpU)xx4nddK"
     })
     assert login_res.status_code == 200, f"Login failed: {login_res.text}"
     token = login_res.json()["access_token"]

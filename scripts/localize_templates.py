@@ -209,7 +209,7 @@ FOOTER_AND_MODALS_HTML = """  <!-- Footer -->
           <input type="password" id="login-password" required class="form-input text-sm" placeholder="••••••••">
         </div>
         <button type="submit" class="btn btn-primary w-full py-3 font-medium" data-i18n="auth_btn_login">Увійти в акаунт</button>
-        <div class="text-[11px] text-neutral-400 text-center">Демо-доступ адміна: admin@female-fabric.ua / Admin123!</div>
+        <div class="text-[11px] text-neutral-400 text-center">Демо-доступ адміна: admin@female-fabric.ua / [SECURE_ADMIN_PASSWORD]</div>
       </form>
 
       <!-- Register Form -->

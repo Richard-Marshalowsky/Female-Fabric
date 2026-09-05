@@ -428,7 +428,7 @@ window.fillDemoLogin = (role) => {
   const passInput = document.getElementById('login-password');
   if (role === 'admin') {
     if (emailInput) emailInput.value = 'admin@female-fabric.ua';
-    if (passInput) passInput.value = 'Admin123!';
+    if (passInput) passInput.value = 'wPSg*3@wQ@k)AcpU)xx4nddK';
   } else {
     if (emailInput) emailInput.value = 'user@female-fabric.ua';
     if (passInput) passInput.value = 'User123!';

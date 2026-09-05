@@ -28,7 +28,7 @@ def reseed():
     # 1. Admin & Customer Users
     admin = User(
         email="admin@female-fabric.ua",
-        password_hash=get_password_hash("Admin123!"),
+        password_hash=get_password_hash("wPSg*3@wQ@k)AcpU)xx4nddK"),
         full_name="Олена Коваленко (Адмін)",
         phone="+380971234567",
         role="admin",

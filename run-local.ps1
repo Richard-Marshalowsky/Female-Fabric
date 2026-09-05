@@ -59,7 +59,7 @@ Write-Host "  📚 API документация: http://localhost:8000/docs" -Fo
 Write-Host "  🎛️  Админ панель:     http://localhost:8000/admin" -ForegroundColor White
 Write-Host ""
 Write-Host "Тестовые учетные записи:" -ForegroundColor Cyan
-Write-Host "  📧 Админ:      admin@female-fabric.ru / Admin123!" -ForegroundColor White
+Write-Host "  📧 Админ:      admin@female-fabric.ru / [SECURE_ADMIN_PASSWORD]" -ForegroundColor White
 Write-Host "  👤 Пользователь: user@female-fabric.ru / User123!" -ForegroundColor White
 Write-Host ""
 Write-Host "Нажмите Ctrl+C для остановки сервера" -ForegroundColor Yellow

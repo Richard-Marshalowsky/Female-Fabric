@@ -151,7 +151,7 @@ npx wrangler deploy
 
 * **Администратор:**
   * **Email:** `admin@female-fabric.ru`
-  * **Пароль:** `Admin123!`
+  * **Пароль:** `[SECURE_ADMIN_PASSWORD]`
 * **Покупатель:**
   * **Email:** `user@female-fabric.ru`
   * **Пароль:** `User123!`

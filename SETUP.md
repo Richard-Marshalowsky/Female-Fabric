@@ -74,7 +74,7 @@
 
 ### Тестовые учетные записи:
 
-- **Админ:** admin@female-fabric.ru / Admin123!
+- **Админ:** admin@female-fabric.ru / [SECURE_ADMIN_PASSWORD]
 - **Пользователь:** user@female-fabric.ru / User123!
 
 ---

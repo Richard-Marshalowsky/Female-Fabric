@@ -58,7 +58,7 @@ def run_all_tests():
     print("  [OK] Customer registration, login, JWT token verification passed")
 
     # Admin Login
-    admin_login_res = client.post("/api/auth/login", json={"email": "admin@female-fabric.ua", "password": "Admin123!"})
+    admin_login_res = client.post("/api/auth/login", json={"email": "admin@female-fabric.ua", "password": "wPSg*3@wQ@k)AcpU)xx4nddK"})
     assert admin_login_res.status_code == 200, f"Admin login failed: {admin_login_res.text}"
     admin_token = admin_login_res.json()["access_token"]
     admin_headers = {"Authorization": f"Bearer {admin_token}"}

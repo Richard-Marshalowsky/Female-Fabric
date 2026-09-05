@@ -1,3 +1,4 @@
+import os
 import json
 from sqlalchemy.orm import Session
 from app.models.user import User
@@ -13,7 +14,7 @@ def seed_database(db: Session):
     if not admin:
         admin = User(
             email="admin@female-fabric.ua",
-            password_hash=get_password_hash("Admin123!"),
+            password_hash=get_password_hash(os.getenv("ADMIN_PASSWORD", "wPSg*3@wQ@k)AcpU)xx4nddK")),
             full_name="Олена Коваленко (Адмін)",
             phone="+380971234567",
             role="admin",
